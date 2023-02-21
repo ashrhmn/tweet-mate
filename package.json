@@ -1,0 +1,20 @@
+{
+  "name": "boilerplate",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "scripts": {
+    "dev": "env-cmd --silent concurrently -c 'auto' -n 'api-interface,api,client' 'yarn workspace api-interface dev' 'yarn workspace api dev' 'yarn workspace client dev'",
+    "build": "env-cmd --silent yarn workspace api-interface build && concurrently -c 'auto' -n 'api,client' 'yarn workspace api build' 'yarn workspace client build'"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "env-cmd": "^10.1.0",
+    "prettier": "^2.8.4"
+  }
+}
