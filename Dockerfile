@@ -15,7 +15,7 @@ RUN yarn build
 
 FROM node:16-alpine
 
-RUN yarn global add concurrently
+RUN yarn global add concurrently env-cmd prisma
 
 WORKDIR /app
 RUN mkdir -p apps/api apps/client libs/api-interface
@@ -26,6 +26,8 @@ COPY libs/api-interface/package.json /app/libs/api-interface/
 RUN yarn install --frozen-lockfile --production
 # COPY libs /app/libs
 # RUN yarn install --frozen-lockfile --production
+COPY apps/api/prisma/schema.prisma /app/apps/api/prisma/schema.prisma
+RUN prisma generate --schema /app/apps/api/prisma/schema.prisma
 
 COPY --from=builder /app/libs/api-interface/dist/ /app/libs/api-interface/dist/
 COPY --from=builder /app/apps/api/dist/ /app/apps/api
