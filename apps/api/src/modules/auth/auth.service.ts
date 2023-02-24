@@ -61,6 +61,14 @@ export class AuthService {
       if (plainPassword !== confirmPassword)
         throw new BadRequestException("Both passwords must match");
 
+      const existingUser = await this.prisma.user.findFirst({
+        where: {
+          username,
+        },
+      });
+
+      if(!!existingUser) throw new BadRequestException("Username already in use")
+
       const password = await hash(plainPassword);
 
       const user = await this.prisma.user.create({

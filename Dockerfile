@@ -7,9 +7,6 @@ COPY apps/api/package.json /app/apps/api/
 COPY apps/client/package.json /app/apps/client/
 COPY libs/api-interface/package.json /app/libs/api-interface/
 RUN yarn install --frozen-lockfile
-# COPY libs /app/libs
-# RUN yarn install --frozen-lockfile
-# COPY apps /app/apps
 COPY . .
 RUN yarn build
 
@@ -24,8 +21,7 @@ COPY apps/api/package.json /app/apps/api/
 COPY apps/client/package.json /app/apps/client/
 COPY libs/api-interface/package.json /app/libs/api-interface/
 RUN yarn install --frozen-lockfile --production
-# COPY libs /app/libs
-# RUN yarn install --frozen-lockfile --production
+
 COPY apps/api/prisma/schema.prisma /app/apps/api/prisma/schema.prisma
 RUN prisma generate --schema /app/apps/api/prisma/schema.prisma
 

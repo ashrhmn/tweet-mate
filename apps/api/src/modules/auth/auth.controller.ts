@@ -1,11 +1,10 @@
 import { Controller } from "@nestjs/common";
 import { endpoints } from "api-interface";
+import { Context, InferMethod } from "src/decorators";
+import { IContext } from "src/interfaces";
 import {
-  Context,
   createAsyncController,
   createController,
-  IContext,
-  InferMethod,
 } from "src/utils/common.utils";
 import { AuthService } from "./auth.service";
 

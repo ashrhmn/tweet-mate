@@ -1,4 +1,6 @@
 import service from "@/service";
+import { handleReqError } from "@/utils/error.utils";
+import { promiseToast } from "@/utils/toast.utils";
 import { endpoints } from "api-interface";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -24,19 +26,16 @@ const SignUp = () => {
     const router = useRouter();
 
     const handleSignUp = () => {
-        toast
-            .promise(
+        promiseToast(
                 service(endpoints.auth.signup)({
                     body: { password, username, confirmPassword },
                 }),
                 {
-                    error: "Error Signing Up",
                     loading: "Signing Up...",
-                    success: "Success",
                 },
             )
             .then(() => router.push("/"))
-            .catch(() => { });
+            .catch(handleReqError);
     };
 
     return (
