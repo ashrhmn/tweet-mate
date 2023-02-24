@@ -3,32 +3,16 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
-import { User } from "@prisma/client";
-import { CONFIG } from "src/config/app.config";
 import { hash, verify } from "argon2";
-import { sign } from "jsonwebtoken";
 import { createAsyncService, createService } from "src/utils/common.utils";
 import { endpoints } from "api-interface";
 import { PrismaService } from "../prisma/prisma.service";
+import { generateTokens, getRefreshTokenUser } from "src/utils/auth.utils";
+import { CONFIG } from "src/config/app.config";
 
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
-
-  async generateTokens(user: User) {
-    const { password: _, ...payload } = user;
-
-    const access_token = sign(payload, CONFIG.JWT.SECRET.ACCESS, {
-      expiresIn: CONFIG.JWT.TIMEOUT.ACCESS,
-    });
-
-    const { roles: __, ...refreshTokenPayload } = payload;
-
-    const refresh_token = sign(refreshTokenPayload, CONFIG.JWT.SECRET.REFRESH, {
-      expiresIn: CONFIG.JWT.TIMEOUT.REFRESH,
-    });
-    return { access_token, refresh_token };
-  }
 
   login = createAsyncService<typeof endpoints.auth.login>(
     async ({ body }, { res }) => {
@@ -48,9 +32,16 @@ export class AuthService {
       if (!isCorrectPassword)
         throw new BadRequestException("Invalid Username or Password");
 
-      const { access_token, refresh_token } = await this.generateTokens(user);
-      res.cookie("authorization", access_token);
-      res.cookie("refresh_token", refresh_token);
+      const { access_token, refresh_token } = generateTokens(user);
+      res.cookie("authorization", access_token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + CONFIG.JWT.TIMEOUT.ACCESS * 1000),
+        secure: CONFIG.NODE_ENV === "production",
+      });
+      res.cookie("refresh_token", refresh_token, {
+        httpOnly: true,
+        secure: CONFIG.NODE_ENV === "production",
+      });
       return "success";
     },
   );
@@ -67,25 +58,34 @@ export class AuthService {
         },
       });
 
-      if(!!existingUser) throw new BadRequestException("Username already in use")
+      if (!!existingUser)
+        throw new BadRequestException("Username already in use");
 
       const password = await hash(plainPassword);
 
       const user = await this.prisma.user.create({
         data: { username, password, roles: ["USER"] },
       });
-      const { access_token, refresh_token } = await this.generateTokens(user);
-      res.cookie("authorization", access_token);
-      res.cookie("refresh_token", refresh_token);
+      const { access_token, refresh_token } = generateTokens(user);
+      res.cookie("authorization", access_token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + CONFIG.JWT.TIMEOUT.ACCESS * 1000),
+        secure: CONFIG.NODE_ENV === "production",
+      });
+      res.cookie("refresh_token", refresh_token, {
+        httpOnly: true,
+        secure: CONFIG.NODE_ENV === "production",
+      });
 
       return "success";
     },
   );
 
-  currentUser = createService<typeof endpoints.auth.currentUser>(
-    (_, { user }) => {
-      if (!user) throw new UnauthorizedException();
-      return user;
+  currentUser = createAsyncService<typeof endpoints.auth.currentUser>(
+    async (_, { user }) => {
+      console.log("user : ", user);
+      if (!!user) return user;
+      throw new UnauthorizedException();
     },
   );
 

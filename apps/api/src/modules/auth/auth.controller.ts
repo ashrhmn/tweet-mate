@@ -32,7 +32,7 @@ export class AuthController {
 
   @InferMethod(endpoints.auth.currentUser)
   currentUser(@Context() context: IContext) {
-    return createController(
+    return createAsyncController(
       endpoints.auth.currentUser,
       context,
       this.authService.currentUser,

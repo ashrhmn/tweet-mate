@@ -1,7 +1,13 @@
-import { BadRequestException, createParamDecorator, ExecutionContext, HttpException, HttpStatus } from "@nestjs/common";
+import {
+  BadRequestException,
+  createParamDecorator,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
 import { IEndpoint } from "api-interface";
 import { Request } from "express";
-import { getUser } from "src/utils/auth.utils";
+import { IContextRequest } from "src/interfaces";
 
 export const Input = createParamDecorator<IEndpoint<any, any, any, any>>(
   ({ bodySchema, paramSchema, querySchema }, context: ExecutionContext) => {
@@ -24,8 +30,8 @@ export const Input = createParamDecorator<IEndpoint<any, any, any, any>>(
 );
 
 export const Context = createParamDecorator((_, context: ExecutionContext) => {
-  const req: Request = context.switchToHttp().getRequest();
+  const req: IContextRequest = context.switchToHttp().getRequest();
   const res: Response = context.switchToHttp().getResponse();
-  const user = getUser(req);
+  const user = req.user;
   return { req, res, user };
 });

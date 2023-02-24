@@ -1,5 +1,7 @@
 FROM node:16-alpine as builder
 
+ENV NODE_ENV=production
+
 WORKDIR /app
 RUN mkdir -p apps/api apps/client libs/api-interface
 COPY package.json yarn.lock /app/

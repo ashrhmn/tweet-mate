@@ -1,7 +1,11 @@
 import { BadRequestException } from "@nestjs/common";
-import { IEndpoint, InferInputs, InferOutputs, InferOutputsPromise } from "api-interface";
+import {
+  IEndpoint,
+  InferInputs,
+  InferOutputs,
+  InferOutputsPromise,
+} from "api-interface";
 import { IContext } from "src/interfaces";
-
 
 export const createController = <P, Q, R, B>(
   {
