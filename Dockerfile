@@ -1,6 +1,5 @@
 FROM node:16-alpine as builder
 
-ENV NODE_ENV=production
 
 WORKDIR /app
 RUN mkdir -p apps/api apps/client libs/api-interface
@@ -34,5 +33,7 @@ COPY --from=builder /app/apps/client/.next/static/. /app/apps/client/.next/stati
 COPY --from=builder /app/apps/client/public/. /app/apps/client/public/.
 
 EXPOSE 3000
+
+ENV NODE_ENV=production
 
 CMD ["concurrently", "node apps/api/main.js", "node apps/client/server.js"]
