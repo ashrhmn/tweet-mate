@@ -7,7 +7,7 @@ export const CONFIG = {
         process.env.REFRESH_TOKEN_JWT_SECRET || "refresh_token_not_configured",
     },
     TIMEOUT: {
-      ACCESS: 10, // TODO : update time
+      ACCESS: +(process.env.ACCESS_TOKEN_TIMEOUT || 120), // TODO : update time
       REFRESH: "365d",
     },
   },

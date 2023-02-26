@@ -7,7 +7,7 @@ import { hash, verify } from "argon2";
 import { createAsyncService, createService } from "src/utils/common.utils";
 import { endpoints } from "api-interface";
 import { PrismaService } from "../prisma/prisma.service";
-import { generateTokens, getRefreshTokenUser } from "src/utils/auth.utils";
+import { generateTokens } from "src/utils/auth.utils";
 import { CONFIG } from "src/config/app.config";
 
 @Injectable()
