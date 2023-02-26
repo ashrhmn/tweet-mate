@@ -22,9 +22,7 @@ export const promiseToast = <T>(
   return toast.promise(promise, msgOptions, {
     ...opts,
     error: {
-      ...(!!msgOptions.error
-        ? opts?.error
-        : { ...opts?.error, ...hideCss }),
+      ...(!!msgOptions.error ? opts?.error : { ...opts?.error, ...hideCss }),
     },
     success: {
       ...(!!msgOptions.success

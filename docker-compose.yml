@@ -1,11 +1,11 @@
 version: "3.7"
 
 services:
-    app:
-        build: .
-        ports:
-            - 3000:3000
-        container_name: boil
-        restart: unless-stopped
-        env_file:
-            - .env
+  app:
+    build: .
+    ports:
+      - 3000:3000
+    container_name: boil
+    restart: unless-stopped
+    env_file:
+      - .env
