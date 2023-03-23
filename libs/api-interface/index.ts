@@ -1,4 +1,5 @@
 import { ZodType, z } from "zod";
+import { ROLE } from "@prisma/client";
 
 const defaultConfig = {
   paramSchema: z.object({}),
@@ -60,13 +61,27 @@ export const endpoints = {
       pattern: "auth/current-user",
       responseSchema: z.object({
         username: z.string(),
-        roles: z.array(z.string()),
+        roles: z.nativeEnum(ROLE).array(),
       }),
     },
     logout: {
       ...defaultConfig,
       pattern: "auth/logout",
       responseSchema: z.void(),
+    },
+  },
+  posts: {
+    getPosts: {
+      ...defaultConfig,
+      pattern: "posts",
+      responseSchema: z.array(
+        z.object({
+          id: z.string(),
+          title: z.string(),
+          content: z.string(),
+          published: z.boolean(),
+        }),
+      ),
     },
   },
 } as const;
