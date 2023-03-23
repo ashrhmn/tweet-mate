@@ -14,6 +14,8 @@ import { CONFIG } from "src/config/app.config";
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
+
+
   login = createAsyncService<typeof endpoints.auth.login>(
     async ({ body }, { res }) => {
       const { username, password } = body;
