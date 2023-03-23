@@ -29,7 +29,7 @@ RUN prisma generate --schema /app/apps/api/prisma/schema.prisma
 
 COPY --from=builder /app/libs/api-interface/dist/ /app/libs/api-interface/dist/
 COPY --from=builder /app/apps/api/dist/src/. /app/apps/api/.
-COPY --from=builder /app/apps/client/.next/standalone/. /app/apps/client/.
+COPY --from=builder /app/apps/client/.next/standalone/apps/client/. /app/apps/client/.
 COPY --from=builder /app/apps/client/.next/static/. /app/apps/client/.next/static/.
 COPY --from=builder /app/apps/client/public/. /app/apps/client/public/.
 
