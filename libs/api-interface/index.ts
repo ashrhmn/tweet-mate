@@ -1,5 +1,5 @@
-import { ZodType, z } from "zod";
 import { ROLE } from "@prisma/client";
+import { ZodType, z } from "zod";
 
 const defaultConfig = {
   paramSchema: z.object({}),
@@ -42,7 +42,10 @@ export const endpoints = {
       ...defaultConfig,
       pattern: "auth/login",
       method: "POST",
-      bodySchema: z.object({ username: z.string(), password: z.string() }),
+      bodySchema: z.object({
+        username: z.string(),
+        password: z.string(),
+      }),
       responseSchema: z.string(),
     },
     signup: {
