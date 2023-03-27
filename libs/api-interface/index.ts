@@ -36,6 +36,40 @@ export type InferOutputs<IEndpoint> = PickSchemaType<
 >;
 export type InferOutputsPromise<IEndpoint> = Promise<InferOutputs<IEndpoint>>;
 
+const userSchema = z.object({
+  id: z.string(),
+  username: z.string(),
+  permissions: z.nativeEnum(PERMISSIONS).array(),
+});
+
+const memberUserSchema = z.object({
+  id: z.string(),
+  discordUsername: z.string(),
+  discordDiscriminator: z.number(),
+});
+
+const projectSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  url: z.string(),
+  authorId: z.string(),
+});
+
+const newTweetPostSchema = z.object({
+  id: z.string(),
+  projectId: z.string(),
+  content: z.string(),
+  media: z.string().array(),
+});
+
+const existingTweetPostSchema = z.object({
+  id: z.string(),
+  tweetUrl: z.string(),
+  retweetOfProjectId: z.string(),
+  likeOfProjectId: z.string(),
+});
+
 export const endpoints = {
   auth: {
     login: {
@@ -77,13 +111,22 @@ export const endpoints = {
     getAll: {
       ...defaultConfig,
       pattern: "projects",
-      responseSchema: z
-        .object({
-          id: z.string(),
-          name: z.string(),
-          description: z.string().nullable(),
-        })
+      responseSchema: projectSchema
+        .and(z.object({ author: userSchema }))
         .array(),
+    },
+    create: {
+      ...defaultConfig,
+      pattern: "projects",
+      method: "POST",
+      bodySchema: projectSchema
+        .omit({
+          id: true,
+          authorId: true,
+          description: true,
+        })
+        .and(z.object({ description: z.string().optional() })),
+      responseSchema: z.string(),
     },
   },
 } as const;
