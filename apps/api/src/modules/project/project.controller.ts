@@ -28,4 +28,14 @@ export class ProjectController {
       this.projectService.create,
     );
   }
+
+  @Permissions("MANAGE_PROJECT")
+  @InferMethod(endpoints.projects.delete)
+  delete(@Context() context: IContext) {
+    return createAsyncController(
+      endpoints.projects.delete,
+      context,
+      this.projectService.delete,
+    );
+  }
 }

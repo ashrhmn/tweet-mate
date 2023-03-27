@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { endpoints } from "api-interface";
 import { createAsyncService } from "src/utils/common.utils";
 import { PrismaService } from "../prisma/prisma.service";
@@ -22,6 +26,18 @@ export class ProjectService {
         data: { ...body, authorId: user.id },
       });
       return "created";
+    },
+  );
+
+  delete = createAsyncService<typeof endpoints.projects.delete>(
+    async ({ param: { id } }, { user }) => {
+      if (!user) throw new UnauthorizedException();
+      const project = await this.prisma.project.findFirst({
+        where: { id, authorId: user.id },
+      });
+      if (!project) throw new NotFoundException();
+      await this.prisma.project.delete({ where: { id } });
+      return "deleted";
     },
   );
 }

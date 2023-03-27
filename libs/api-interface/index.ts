@@ -128,5 +128,12 @@ export const endpoints = {
         .and(z.object({ description: z.string().optional() })),
       responseSchema: z.string(),
     },
+    delete: {
+      ...defaultConfig,
+      pattern: "projects/:id",
+      method: "DELETE",
+      paramSchema: z.object({ id: z.string() }),
+      responseSchema: z.string(),
+    },
   },
 } as const;
