@@ -25,42 +25,54 @@ model User {
   password    String
   permissions PERMISSIONS[]
   projects    Project[]
+
+  @@map("users")
 }
 
 model MemberUser {
   id                   String              @id @default(cuid())
-  discordUsername      String
-  discordDiscriminator Int
+  discordUsername      String              @map("discord_username")
+  discordDiscriminator Int                 @map("discord_discriminator")
   retweetedPosts       ExistingTweetPost[] @relation(name: "RetweetedByMemberUsers")
   likedPosts           ExistingTweetPost[] @relation(name: "LikedByMemberUsers")
+
+  @@unique([discordUsername, discordDiscriminator])
+  @@map("member_users")
 }
 
 model Project {
   id            String              @id @default(cuid())
   name          String
   description   String?
+  url           String              @unique @default(uuid())
   author        User                @relation(fields: [userId], references: [id])
-  userId        String
+  userId        String              @map("user_id")
   newTweetPosts NewTweetPost[]
   retweetPosts  ExistingTweetPost[] @relation(name: "retweetPostToProject")
   likeTweets    ExistingTweetPost[] @relation(name: "likePostToProject")
+
+  @@map("projects")
 }
 
 model NewTweetPost {
   id        String   @id @default(cuid())
   project   Project  @relation(fields: [projectId], references: [id])
-  projectId String
+  projectId String   @map("project_id")
   content   String?
   media     String[]
+
+  @@map("new_tweet_posts")
 }
 
 model ExistingTweetPost {
   id                     String       @id @default(cuid())
-  tweetUrl               String
+  tweetUrl               String       @map("tweet_url")
   retweetedByMemberUsers MemberUser[] @relation(name: "RetweetedByMemberUsers")
   likedByMemberUsers     MemberUser[] @relation(name: "LikedByMemberUsers")
   retweetOfProject       Project?     @relation(fields: [retweetOfProjectId], references: [id], name: "retweetPostToProject")
-  retweetOfProjectId     String?
+  retweetOfProjectId     String?      @map("retweet_of_project_id")
   likeOfProject          Project?     @relation(fields: [likeOfProjectId], references: [id], name: "likePostToProject")
-  likeOfProjectId        String?
+  likeOfProjectId        String?      @map("like_of_project_id")
+
+  @@map("existing_tweet_posts")
 }
