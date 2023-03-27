@@ -3,18 +3,16 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
-import { hash, verify } from "argon2";
-import { createAsyncService, createService } from "src/utils/common.utils";
 import { endpoints } from "api-interface";
-import { PrismaService } from "../prisma/prisma.service";
-import { generateTokens } from "src/utils/auth.utils";
+import { hash, verify } from "argon2";
 import { CONFIG } from "src/config/app.config";
+import { generateTokens } from "src/utils/auth.utils";
+import { createAsyncService, createService } from "src/utils/common.utils";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
-
-
 
   login = createAsyncService<typeof endpoints.auth.login>(
     async ({ body }, { res }) => {
@@ -66,7 +64,7 @@ export class AuthService {
       const password = await hash(plainPassword);
 
       const user = await this.prisma.user.create({
-        data: { username, password, roles: ["USER"] },
+        data: { username, password, permissions: [] },
       });
       const { access_token, refresh_token } = generateTokens(user);
       res.cookie("authorization", access_token, {

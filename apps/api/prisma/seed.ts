@@ -9,17 +9,17 @@ async function seedUser() {
       {
         username: "ash",
         password: await hash("ash"),
-        roles: ["USER", "ADMIN"],
+        permissions: ["READ_USER"],
       },
       {
         username: "dev",
         password: await hash("dev"),
-        roles: ["USER"],
+        permissions: ["READ_USER"],
       },
       {
         username: "admin",
         password: await hash("admin"),
-        roles: ["ADMIN"],
+        permissions: ["CREATE_USER", "UPDATE_USER", "READ_USER"],
       },
     ],
     skipDuplicates: true,

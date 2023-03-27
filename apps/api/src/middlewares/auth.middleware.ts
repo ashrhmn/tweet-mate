@@ -1,11 +1,11 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
-import { generateTokens, getUser } from "src/utils/auth.utils";
+import { User } from "@prisma/client";
+import { Response } from "express";
 import { verify } from "jsonwebtoken";
 import { CONFIG } from "src/config/app.config";
-import { User } from "@prisma/client";
-import { PrismaService } from "src/modules/prisma/prisma.service";
-import { Response } from "express";
 import { IContextRequest } from "src/interfaces";
+import { PrismaService } from "src/modules/prisma/prisma.service";
+import { generateTokens, getUser } from "src/utils/auth.utils";
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
@@ -39,7 +39,7 @@ export class AuthMiddleware implements NestMiddleware {
         httpOnly: true,
         secure: CONFIG.NODE_ENV === "production",
       });
-      req.user = { ...payload, roles: user.roles, iat: 0, exp: 0 };
+      req.user = { ...payload, permissions: user.permissions, iat: 0, exp: 0 };
       return next();
     } catch (err) {
       console.error("auth.middleware error : ", err);

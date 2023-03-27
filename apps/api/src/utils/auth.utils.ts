@@ -1,8 +1,7 @@
 import { User } from "@prisma/client";
 import { Request } from "express";
-import { verify } from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
 import { CONFIG } from "src/config/app.config";
-import { sign } from "jsonwebtoken";
 
 export const getUser = (req: Request) => {
   try {
@@ -39,7 +38,7 @@ export const generateTokens = (user: User) => {
     expiresIn: CONFIG.JWT.TIMEOUT.ACCESS,
   });
 
-  const { roles: __, ...refreshTokenPayload } = payload;
+  const { permissions: __, ...refreshTokenPayload } = payload;
 
   const refresh_token = sign(refreshTokenPayload, CONFIG.JWT.SECRET.REFRESH, {
     expiresIn: CONFIG.JWT.TIMEOUT.REFRESH,

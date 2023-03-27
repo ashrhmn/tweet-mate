@@ -1,4 +1,4 @@
-import { ROLE } from "@prisma/client";
+import { PERMISSIONS } from "@prisma/client";
 import { ZodType, z } from "zod";
 
 const defaultConfig = {
@@ -64,7 +64,7 @@ export const endpoints = {
       pattern: "auth/current-user",
       responseSchema: z.object({
         username: z.string(),
-        roles: z.nativeEnum(ROLE).array(),
+        permissions: z.nativeEnum(PERMISSIONS).array(),
       }),
     },
     logout: {

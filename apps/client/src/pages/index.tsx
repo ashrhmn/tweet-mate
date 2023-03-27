@@ -30,7 +30,7 @@ const Dashboard = ({
         </Link>
       </div>
       <h1>Welcome, {user.username}</h1>
-      <p>Roles : {user.roles.join(" | ")}</p>
+      <p>Roles : {user.permissions.join(" | ")}</p>
     </div>
   );
 };
