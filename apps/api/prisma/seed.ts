@@ -9,7 +9,13 @@ async function seedUser() {
       {
         username: "ash",
         password: await hash("ash"),
-        permissions: ["READ_USER"],
+        permissions: [
+          "READ_USER",
+          "CREATE_USER",
+          "MANAGE_USER",
+          "CREATE_PROJECT",
+          "MANAGE_PROJECT",
+        ],
       },
       {
         username: "dev",
@@ -19,7 +25,7 @@ async function seedUser() {
       {
         username: "admin",
         password: await hash("admin"),
-        permissions: ["CREATE_USER", "UPDATE_USER", "READ_USER"],
+        permissions: ["ADMIN_PERMISSION"],
       },
     ],
     skipDuplicates: true,

@@ -10,16 +10,57 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-enum PERMISSIONS{
+enum PERMISSIONS {
+  ADMIN_PERMISSION
   READ_USER
   CREATE_USER
-  UPDATE_USER
+  MANAGE_USER
+  CREATE_PROJECT
+  MANAGE_PROJECT
 }
 
-model User{
-  id String @id @default(cuid())
-  username String @unique
-  password String
+model User {
+  id          String        @id @default(cuid())
+  username    String        @unique
+  password    String
   permissions PERMISSIONS[]
+  projects    Project[]
+}
+
+model MemberUser {
+  id                   String              @id @default(cuid())
+  discordUsername      String
+  discordDiscriminator Int
+  retweetedPosts       ExistingTweetPost[] @relation(name: "RetweetedByMemberUsers")
+  likedPosts           ExistingTweetPost[] @relation(name: "LikedByMemberUsers")
+}
+
+model Project {
+  id            String              @id @default(cuid())
+  name          String
+  description   String?
+  author        User                @relation(fields: [userId], references: [id])
+  userId        String
+  newTweetPosts NewTweetPost[]
+  retweetPosts  ExistingTweetPost[] @relation(name: "retweetPostToProject")
+  likeTweets    ExistingTweetPost[] @relation(name: "likePostToProject")
+}
+
+model NewTweetPost {
+  id        String   @id @default(cuid())
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String
+  content   String?
+  media     String[]
+}
+
+model ExistingTweetPost {
+  id                     String       @id @default(cuid())
+  tweetUrl               String
+  retweetedByMemberUsers MemberUser[] @relation(name: "RetweetedByMemberUsers")
+  likedByMemberUsers     MemberUser[] @relation(name: "LikedByMemberUsers")
+  retweetOfProject       Project?     @relation(fields: [retweetOfProjectId], references: [id], name: "retweetPostToProject")
+  retweetOfProjectId     String?
+  likeOfProject          Project?     @relation(fields: [likeOfProjectId], references: [id], name: "likePostToProject")
+  likeOfProjectId        String?
 }

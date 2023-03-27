@@ -73,18 +73,17 @@ export const endpoints = {
       responseSchema: z.void(),
     },
   },
-  posts: {
-    getPosts: {
+  projects: {
+    getAll: {
       ...defaultConfig,
-      pattern: "posts",
-      responseSchema: z.array(
-        z.object({
+      pattern: "projects",
+      responseSchema: z
+        .object({
           id: z.string(),
-          title: z.string(),
-          content: z.string(),
-          published: z.boolean(),
-        }),
-      ),
+          name: z.string(),
+          description: z.string().nullable(),
+        })
+        .array(),
     },
   },
 } as const;

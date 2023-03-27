@@ -27,6 +27,8 @@ export class PermissionsGuard implements CanActivate {
 
     if (!user) return false;
 
+    if (user.permissions.includes("ADMIN_PERMISSION")) return true;
+
     return permissions
       .map((r) => r.toLowerCase())
       .some((rr) => user.permissions.map((r) => r.toLowerCase()).includes(rr));
