@@ -1,5 +1,5 @@
 import { PERMISSIONS } from "@prisma/client";
-import { ZodType, z } from "zod";
+import { z, ZodType } from "zod";
 
 const defaultConfig = {
   paramSchema: z.object({}),
@@ -39,6 +39,7 @@ export type InferOutputsPromise<IEndpoint> = Promise<InferOutputs<IEndpoint>>;
 const userSchema = z.object({
   id: z.string(),
   username: z.string(),
+  // password: z.string(),
   permissions: z.nativeEnum(PERMISSIONS).array(),
 });
 
@@ -126,6 +127,49 @@ export const endpoints = {
           description: true,
         })
         .and(z.object({ description: z.string().optional() })),
+      responseSchema: z.string(),
+    },
+  },
+  users: {
+    getAll: {
+      ...defaultConfig,
+      pattern: "users",
+      responseSchema: userSchema.array(),
+    },
+    create: {
+      ...defaultConfig,
+      pattern: "users",
+      method: "POST",
+      bodySchema: userSchema
+        .omit({
+          id: true,
+        })
+        .and(
+          z.object({
+            password: z.string(),
+            confirmPassword: z.string().optional(),
+          }),
+        ),
+      responseSchema: z.string(),
+    },
+    update: {
+      ...defaultConfig,
+      pattern: "users/:id",
+      method: "PUT",
+      paramSchema: z.object({ id: z.string() }),
+      bodySchema: userSchema.and(
+        z.object({
+          password: z.string(),
+          confirmPassword: z.string().optional(),
+        }),
+      ),
+      responseSchema: z.string(),
+    },
+    delete: {
+      ...defaultConfig,
+      pattern: "users/:id",
+      method: "DELETE",
+      paramSchema: z.object({ id: z.string() }),
       responseSchema: z.string(),
     },
   },
