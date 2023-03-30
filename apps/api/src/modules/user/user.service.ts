@@ -3,9 +3,10 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
+import { PERMISSIONS } from "@prisma/client";
 import { endpoints } from "api-interface";
 import { hash } from "argon2";
-import { createAsyncService } from "src/utils/common.utils";
+import { createAsyncService, createService } from "src/utils/common.utils";
 import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
@@ -50,7 +51,13 @@ export class UserService {
       const password = await hash(plainPassword);
 
       const newUser = await this.prisma.user.create({
-        data: { username, password, permissions },
+        data: {
+          username,
+          password,
+          permissions: Array.from(
+            new Set(permissions.map((p) => p.permission)),
+          ),
+        },
       });
 
       return "created";
@@ -108,6 +115,15 @@ export class UserService {
       });
 
       return "deleted";
+    },
+  );
+
+  getAllPermissions = createService<typeof endpoints.users.getAllPermissions>(
+    () => {
+      return Object.values(PERMISSIONS).map((permission, index) => ({
+        id: index,
+        permission,
+      }));
     },
   );
 }

@@ -147,16 +147,26 @@ export const endpoints = {
       ...defaultConfig,
       pattern: "users",
       method: "POST",
-      bodySchema: userSchema
-        .omit({
-          id: true,
-        })
-        .and(
-          z.object({
-            password: z.string(),
-            confirmPassword: z.string().optional(),
-          }),
-        ),
+      bodySchema: z.object({
+        username: z
+          .string()
+          .min(3, "Username must be at least 3 characters long")
+          .max(20),
+        password: z
+          .string()
+          .min(8, "Password must be at least 3 characters long")
+          .max(20),
+        confirmPassword: z
+          .string()
+          .min(8, "Password must be at least 3 characters long")
+          .max(20),
+        permissions: z
+          .object({
+            id: z.number(),
+            permission: z.nativeEnum(PERMISSIONS),
+          })
+          .array(),
+      }),
       responseSchema: z.string(),
     },
     update: {
@@ -178,6 +188,16 @@ export const endpoints = {
       method: "DELETE",
       paramSchema: z.object({ id: z.string() }),
       responseSchema: z.string(),
+    },
+    getAllPermissions: {
+      ...defaultConfig,
+      pattern: "users/permissions",
+      responseSchema: z
+        .object({
+          id: z.number(),
+          permission: z.nativeEnum(PERMISSIONS),
+        })
+        .array(),
     },
   },
 } as const;

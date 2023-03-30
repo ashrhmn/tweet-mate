@@ -3,7 +3,10 @@ import { endpoints } from "api-interface";
 import { Context, InferMethod } from "src/decorators";
 import { Permissions } from "src/guards/permission.guard";
 import { IContext } from "src/interfaces";
-import { createAsyncController } from "src/utils/common.utils";
+import {
+  createAsyncController,
+  createController,
+} from "src/utils/common.utils";
 import { UserService } from "./user.service";
 
 @Controller()
@@ -46,6 +49,16 @@ export class UserController {
       endpoints.users.delete,
       contex,
       this.userService.delete,
+    );
+  }
+
+  @Permissions("MANAGE_USER")
+  @InferMethod(endpoints.users.getAllPermissions)
+  getAllPermissions(@Context() contex: IContext) {
+    return createController(
+      endpoints.users.getAllPermissions,
+      contex,
+      this.userService.getAllPermissions,
     );
   }
 }
