@@ -36,6 +36,12 @@ export type InferOutputs<IEndpoint> = PickSchemaType<
 >;
 export type InferOutputsPromise<IEndpoint> = Promise<InferOutputs<IEndpoint>>;
 
+const emptyStringToUndefined = z.literal("").transform(() => undefined);
+
+function optionalUndefinedString<T extends z.ZodTypeAny>(schema: T) {
+  return schema.optional().or(emptyStringToUndefined);
+}
+
 const userSchema = z.object({
   id: z.string(),
   username: z.string(),
@@ -167,12 +173,7 @@ export const endpoints = {
           .string()
           .min(8, "Password must be at least 8 characters long")
           .max(20),
-        permissions: z
-          .object({
-            id: z.number(),
-            permission: z.nativeEnum(PERMISSIONS),
-          })
-          .array(),
+        permissions: z.nativeEnum(PERMISSIONS).array(),
       }),
       responseSchema: z.string(),
     },
@@ -181,20 +182,32 @@ export const endpoints = {
       pattern: "user/:id",
       method: "PUT",
       paramSchema: z.object({ id: z.string() }),
-      bodySchema: z.object({
-        username: z
-          .string()
-          .min(3, "Username must be at least 8 characters long")
-          .max(20),
-        password: z.string().optional(),
-        confirmPassword: z.string().optional(),
-        permissions: z
-          .object({
-            id: z.number(),
-            permission: z.nativeEnum(PERMISSIONS),
-          })
-          .array(),
-      }),
+      bodySchema: z
+        .object({
+          username: optionalUndefinedString(
+            z
+              .string()
+              .min(3, "Username must be at least 8 characters long")
+              .max(20),
+          ),
+          password: optionalUndefinedString(
+            z
+              .string()
+              .min(3, "Password must be at least 8 characters long")
+              .max(20, "Password must be at most 20 characters long"),
+          ),
+          confirmPassword: optionalUndefinedString(
+            z
+              .string()
+              .min(3, "Password must be at least 8 characters long")
+              .max(20, "Password must be at most 20 characters long"),
+          ),
+          permissions: z.nativeEnum(PERMISSIONS).array(),
+        })
+        .refine((data) => data.password === data.confirmPassword, {
+          message: "Passwords do not match",
+          path: ["confirmPassword"],
+        }),
       responseSchema: z.string(),
     },
     delete: {
@@ -207,12 +220,7 @@ export const endpoints = {
     getAllPermissions: {
       ...defaultConfig,
       pattern: "users/permissions",
-      responseSchema: z
-        .object({
-          id: z.number(),
-          permission: z.nativeEnum(PERMISSIONS),
-        })
-        .array(),
+      responseSchema: z.nativeEnum(PERMISSIONS).array(),
     },
   },
 } as const;

@@ -78,9 +78,7 @@ export class UserService {
         data: {
           username,
           password,
-          permissions: Array.from(
-            new Set(permissions.map((p) => p.permission)),
-          ),
+          permissions: Array.from(new Set(permissions)),
         },
       });
 
@@ -125,18 +123,14 @@ export class UserService {
             data: {
               username,
               password,
-              permissions: Array.from(
-                new Set(permissions.map((p) => p.permission)),
-              ),
+              permissions: Array.from(new Set(permissions)),
             },
           })
         : await this.prisma.user.update({
             where: { id },
             data: {
               username,
-              permissions: Array.from(
-                new Set(permissions.map((p) => p.permission)),
-              ),
+              permissions: Array.from(new Set(permissions)),
             },
           });
 
@@ -160,10 +154,7 @@ export class UserService {
 
   getAllPermissions = createService<typeof endpoints.users.getAllPermissions>(
     () => {
-      return Object.values(PERMISSIONS).map((permission, index) => ({
-        id: index,
-        permission,
-      }));
+      return Object.values(PERMISSIONS);
     },
   );
 }
