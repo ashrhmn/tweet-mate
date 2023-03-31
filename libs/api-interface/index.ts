@@ -143,6 +143,13 @@ export const endpoints = {
       pattern: "users",
       responseSchema: userSchema.array(),
     },
+    getUser: {
+      ...defaultConfig,
+      pattern: "user/:id",
+      method: "GET",
+      paramSchema: z.object({ id: z.string() }),
+      responseSchema: userSchema,
+    },
     create: {
       ...defaultConfig,
       pattern: "users",
@@ -154,11 +161,11 @@ export const endpoints = {
           .max(20),
         password: z
           .string()
-          .min(8, "Password must be at least 3 characters long")
+          .min(8, "Password must be at least 8 characters long")
           .max(20),
         confirmPassword: z
           .string()
-          .min(8, "Password must be at least 3 characters long")
+          .min(8, "Password must be at least 8 characters long")
           .max(20),
         permissions: z
           .object({
@@ -171,20 +178,28 @@ export const endpoints = {
     },
     update: {
       ...defaultConfig,
-      pattern: "users/:id",
+      pattern: "user/:id",
       method: "PUT",
       paramSchema: z.object({ id: z.string() }),
-      bodySchema: userSchema.and(
-        z.object({
-          password: z.string(),
-          confirmPassword: z.string().optional(),
-        }),
-      ),
+      bodySchema: z.object({
+        username: z
+          .string()
+          .min(3, "Username must be at least 8 characters long")
+          .max(20),
+        password: z.string().optional(),
+        confirmPassword: z.string().optional(),
+        permissions: z
+          .object({
+            id: z.number(),
+            permission: z.nativeEnum(PERMISSIONS),
+          })
+          .array(),
+      }),
       responseSchema: z.string(),
     },
     delete: {
       ...defaultConfig,
-      pattern: "users/:id",
+      pattern: "user/:id",
       method: "DELETE",
       paramSchema: z.object({ id: z.string() }),
       responseSchema: z.string(),

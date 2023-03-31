@@ -13,12 +13,23 @@ import { UserService } from "./user.service";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Permissions("READ_USER")
   @InferMethod(endpoints.users.getAll)
   getAll(@Context() context: IContext) {
     return createAsyncController(
       endpoints.users.getAll,
       context,
       this.userService.getAll,
+    );
+  }
+
+  @Permissions("READ_USER")
+  @InferMethod(endpoints.users.getUser)
+  getUser(@Context() contex: IContext) {
+    return createAsyncController(
+      endpoints.users.getUser,
+      contex,
+      this.userService.getUser,
     );
   }
 
