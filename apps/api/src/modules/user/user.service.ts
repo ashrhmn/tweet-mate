@@ -3,25 +3,50 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
+import { PERMISSIONS } from "@prisma/client";
 import { endpoints } from "api-interface";
 import { hash } from "argon2";
-import { createAsyncService } from "src/utils/common.utils";
+import { createAsyncService, createService } from "src/utils/common.utils";
 import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  getAll = createAsyncService<typeof endpoints.users.getAll>(async () => {
-    // if (!user) throw new UnauthorizedException();
-    return this.prisma.user.findMany({
-      select: {
-        id: true,
-        username: true,
-        permissions: true,
-      },
-    });
-  });
+  getAll = createAsyncService<typeof endpoints.users.getAll>(
+    async ({}, { user }) => {
+      console.log(user);
+      // if (!user) throw new UnauthorizedException();
+      return this.prisma.user.findMany({
+        select: {
+          id: true,
+          username: true,
+          permissions: true,
+        },
+      });
+    },
+  );
+
+  getUser = createAsyncService<typeof endpoints.users.getUser>(
+    async ({ param }) => {
+      const id = param.id;
+      const user = await this.prisma.user.findFirst({
+        where: {
+          id,
+        },
+        select: {
+          id: true,
+          username: true,
+          permissions: true,
+        },
+      });
+      if (!user) {
+        throw new BadRequestException("User not Found");
+      } else {
+        return user;
+      }
+    },
+  );
 
   create = createAsyncService<typeof endpoints.users.create>(
     async ({ body }, { user }) => {
@@ -50,7 +75,11 @@ export class UserService {
       const password = await hash(plainPassword);
 
       const newUser = await this.prisma.user.create({
-        data: { username, password, permissions },
+        data: {
+          username,
+          password,
+          permissions: Array.from(new Set(permissions)),
+        },
       });
 
       return "created";
@@ -86,12 +115,24 @@ export class UserService {
         throw new BadRequestException("Username should be unique");
       }
 
-      const password = await hash(plainPassword);
+      const password = plainPassword ? await hash(plainPassword) : null;
 
-      const updatedUser = await this.prisma.user.update({
-        where: { id },
-        data: { username, password, permissions },
-      });
+      const updatedUser = password
+        ? await this.prisma.user.update({
+            where: { id },
+            data: {
+              username,
+              password,
+              permissions: Array.from(new Set(permissions)),
+            },
+          })
+        : await this.prisma.user.update({
+            where: { id },
+            data: {
+              username,
+              permissions: Array.from(new Set(permissions)),
+            },
+          });
 
       return "updated";
     },
@@ -108,6 +149,12 @@ export class UserService {
       });
 
       return "deleted";
+    },
+  );
+
+  getAllPermissions = createService<typeof endpoints.users.getAllPermissions>(
+    () => {
+      return Object.values(PERMISSIONS);
     },
   );
 }
