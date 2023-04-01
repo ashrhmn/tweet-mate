@@ -1,4 +1,7 @@
+import Create from "@/components/users/CreateUserForm";
+import Update from "@/components/users/UpdateUserForm";
 import service from "@/service";
+import { handleReqError } from "@/utils/error.utils";
 import { promiseToast } from "@/utils/toast.utils";
 import { useQuery } from "@tanstack/react-query";
 import { endpoints } from "api-interface";
@@ -7,25 +10,27 @@ import { useState } from "react";
 
 const Users = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userID, setUserID] = useState("");
   const [query, setQuery] = useState("");
-  const handleEditClick = () => {
+
+  const handleSidebarToggle = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleEditClick = (id: string) => {
     setIsEditFormOpen(true);
+    setUserID(id);
   };
 
   const handleFormClose = () => {
     setIsEditFormOpen(false);
   };
 
-  const Search = (data) => {
-    return data.filter((item) =>
-      item.username.toLowerCase().includes(query.toLowerCase()),
-    );
-  };
-
   const {
     data: getUsers,
     status: getUsersStatus,
-    refetch,
+    refetch: refetchUsers,
   } = useQuery({
     queryKey: ["getUsers"],
     queryFn: () => service(endpoints.users.getAll)({}),
@@ -35,10 +40,21 @@ const Users = () => {
   else if (getUsersStatus === "error") return <div>Users not found</div>;
 
   const deleteDevice = async (id: string) => {
-    await promiseToast(service(endpoints.users.delete)({ param: { id } }), {
-      loading: "Deleting User....",
-      success: "User Deleted",
-    }).then(() => refetch);
+    await promiseToast(
+      service(endpoints.users.delete)({ param: { id } })
+        .then(() => refetchUsers)
+        .catch(handleReqError),
+      {
+        loading: "Deleting User....",
+        success: "User Deleted",
+      },
+    );
+  };
+
+  const Search = (data) => {
+    return data.filter((item) =>
+      item.username.toLowerCase().includes(query.toLowerCase()),
+    );
   };
 
   return (
@@ -50,6 +66,7 @@ const Users = () => {
     bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-80 
     focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50
   "
+          onClick={handleSidebarToggle}
         >
           <span className="relative z-10">Create User</span>
           <span
@@ -58,6 +75,12 @@ const Users = () => {
       filter blur-md -z-1 animate-pulse"
           ></span>
         </button>
+        <Create
+          key="create"
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+          refetchUsers={refetchUsers}
+        />
         <br />
         <br />
         <div className="w-full overflow-hidden rounded-lg shadow-lg">
@@ -116,7 +139,7 @@ const Users = () => {
                     <td className="px-4 py-3 text-xs font-semibold border">
                       <button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                        onClick={handleEditClick}
+                        onClick={() => handleEditClick(user.id)}
                       >
                         Edit
                       </button>
@@ -139,47 +162,12 @@ const Users = () => {
         </div>
 
         {isEditFormOpen && (
-          <div className="fixed z-10 inset-0 overflow-y-auto">
-            <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-              <div
-                className="fixed inset-0 transition-opacity"
-                aria-hidden="true"
-                onClick={handleFormClose}
-              >
-                <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-              </div>
-
-              <span
-                className="hidden sm:inline-block sm:align-middle sm:h-screen"
-                aria-hidden="true"
-              ></span>
-
-              <div
-                className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="modal-headline"
-              >
-                <div>
-                  <div className="mt-3 text-center sm:mt-5">
-                    <h3
-                      className="text-lg leading-6 font-medium text-gray-900"
-                      id="modal-headline"
-                    >
-                      Edit Form
-                    </h3>
-                    <div className="mt-2">
-                      <form>
-                        <div className="mt-4">
-                          <label></label>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Update
+            key={userID}
+            userID={userID}
+            handleFormClose={handleFormClose}
+            refetchUsers={refetchUsers}
+          />
         )}
       </div>
       <br />
