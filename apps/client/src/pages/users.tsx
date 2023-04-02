@@ -1,3 +1,4 @@
+import ErrorView from "@/components/common/ErrorView";
 import Create from "@/components/users/CreateUserForm";
 import Update from "@/components/users/UpdateUserForm";
 import service from "@/service";
@@ -31,6 +32,7 @@ const Users = () => {
     data: getUsers,
     status: getUsersStatus,
     refetch: refetchUsers,
+    error: getUsersError,
   } = useQuery({
     queryKey: ["getUsers"],
     queryFn: () => service(endpoints.users.getAll)({}),
@@ -45,7 +47,7 @@ const Users = () => {
   }, [getUsers, query]);
 
   if (getUsersStatus === "loading") return <div>Loading...</div>;
-  if (getUsersStatus === "error") return <div>Users not found</div>;
+  if (getUsersStatus === "error") return <ErrorView error={getUsersError} />;
 
   const handleDeleteUser = async (id: string) => {
     await promiseToast(

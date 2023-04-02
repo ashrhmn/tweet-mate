@@ -1,7 +1,13 @@
 import { toast } from "react-hot-toast";
 import { z } from "zod";
-import { shortenString } from "./string.utils";
 import { fromZodError } from "zod-validation-error";
+import { shortenString } from "./string.utils";
+
+export const mapError = (error: string) => {
+  if (error.toLowerCase() === "forbidden resource")
+    return "You are not allowed to perform this action";
+  return error;
+};
 
 export const extractReqError = (reason: unknown) => {
   // console.log("extract-req-error", { reason });
@@ -39,4 +45,4 @@ export const formatError = (error: unknown): IErrorResponse =>
   } as const);
 
 export const handleReqError = (reason: unknown) =>
-  toast.error(extractReqError(reason));
+  toast.error(mapError(extractReqError(reason)));

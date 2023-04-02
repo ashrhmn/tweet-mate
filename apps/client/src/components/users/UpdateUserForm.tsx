@@ -110,13 +110,12 @@ const UserEditForm = ({
         param: { id: user.id },
       })
         .then(refetchUser)
-        .then(refetchUsers)
-        .catch(handleReqError),
+        .then(refetchUsers),
       {
         loading: "Updating User....",
         success: "User Updated",
       },
-    );
+    ).catch(handleReqError);
   };
   // console.log(JSON.stringify(watch(), null, 2));
   console.log(JSON.stringify(getValues("permissions"), null, 2));

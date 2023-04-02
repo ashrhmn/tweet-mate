@@ -63,7 +63,7 @@ export class UserController {
     );
   }
 
-  @Permissions("MANAGE_USER")
+  @Permissions("READ_USER")
   @InferMethod(endpoints.users.getAllPermissions)
   getAllPermissions(@Context() contex: IContext) {
     return createController(

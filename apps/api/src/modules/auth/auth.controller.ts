@@ -21,14 +21,14 @@ export class AuthController {
     );
   }
 
-  @InferMethod(endpoints.auth.signup)
-  signup(@Context() context: IContext) {
-    return createAsyncController(
-      endpoints.auth.signup,
-      context,
-      this.authService.signup,
-    );
-  }
+  // @InferMethod(endpoints.auth.signup)
+  // signup(@Context() context: IContext) {
+  //   return createAsyncController(
+  //     endpoints.auth.signup,
+  //     context,
+  //     this.authService.signup,
+  //   );
+  // }
 
   @InferMethod(endpoints.auth.currentUser)
   currentUser(@Context() context: IContext) {
