@@ -90,7 +90,6 @@ const UserEditForm = ({
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
     getValues,
     setValue,
@@ -196,7 +195,7 @@ const UserEditForm = ({
                 </label>
 
                 {allPermissions.map((p) => (
-                  <div className="flex items-center ">
+                  <div key={p} className="flex items-center ">
                     <input
                       type="checkbox"
                       id="permissions"

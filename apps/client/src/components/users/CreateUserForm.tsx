@@ -20,7 +20,7 @@ export default function Create({
   onClose: () => void;
   refetchUsers: () => void;
 }) {
-  const { data: allPermissions, refetch: refetchUser } = useQuery({
+  const { data: allPermissions } = useQuery({
     queryKey: ["user-permissions"],
     queryFn: () => service(endpoints.users.getAllPermissions)({}),
   });
@@ -92,7 +92,7 @@ export default function Create({
                   Sign Up
                 </h2>
                 <form
-                  className=" bg-white bg-opacity-70 space-y-6 border-2 border-gray-200 rounded-md p-4"
+                  className="bg-white bg-opacity-70 space-y-6 border-2 border-gray-200 rounded-md p-4"
                   onSubmit={handleSubmit(handleCreateUser)}
                 >
                   <div>
@@ -138,7 +138,7 @@ export default function Create({
                       Permissions
                     </label>
                     {allPermissions?.map((p) => (
-                      <div className="flex items-center mb-2">
+                      <div key={p} className="flex items-center mb-2">
                         <input
                           type="checkbox"
                           className="form-checkbox h-5 w-5 text-green-500"
