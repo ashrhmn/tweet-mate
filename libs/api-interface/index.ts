@@ -55,14 +55,6 @@ const memberUserSchema = z.object({
   discordDiscriminator: z.number(),
 });
 
-const projectSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string().nullable(),
-  url: z.string(),
-  authorId: z.string(),
-});
-
 const newTweetPostSchema = z.object({
   id: z.string(),
   projectId: z.string(),
@@ -75,6 +67,17 @@ const existingTweetPostSchema = z.object({
   tweetUrl: z.string(),
   retweetOfProjectId: z.string(),
   likeOfProjectId: z.string(),
+});
+
+const projectSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  url: z.string(),
+  authorId: z.string(),
+  // newTweetPosts: newTweetPostSchema.array(),
+  // retweetPosts: existingTweetPostSchema.array(),
+  // likeTweets: existingTweetPostSchema.array(),
 });
 
 export const endpoints = {
@@ -122,6 +125,13 @@ export const endpoints = {
         .and(z.object({ author: userSchema }))
         .array(),
     },
+    getProject: {
+      ...defaultConfig,
+      pattern: "project/:id",
+      method: "GET",
+      paramSchema: z.object({ id: z.string() }),
+      responseSchema: projectSchema.and(z.object({ author: userSchema })),
+    },
     create: {
       ...defaultConfig,
       pattern: "projects",
@@ -131,6 +141,9 @@ export const endpoints = {
           id: true,
           authorId: true,
           description: true,
+          newTweetPosts: true,
+          retweetPosts: true,
+          likeTweets: true,
         })
         .and(z.object({ description: z.string().optional() })),
       responseSchema: z.string(),

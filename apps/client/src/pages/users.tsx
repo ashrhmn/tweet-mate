@@ -127,7 +127,7 @@ const Users = () => {
                         </span>
                       ))}
                     </td>
-                    <td className="px-4 py-3 text-xs font-semibold border">
+                    <td className="px-4 py-3 text-xs font-semibold border whitespace-nowrap">
                       <button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                         onClick={() => handleEditClick(user.id)}

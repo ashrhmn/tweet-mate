@@ -10,12 +10,23 @@ import { ProjectService } from "./project.service";
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
+  @Permissions("MANAGE_PROJECT")
   @InferMethod(endpoints.projects.getAll)
   getAll(@Context() context: IContext) {
     return createAsyncController(
       endpoints.projects.getAll,
       context,
       this.projectService.getAll,
+    );
+  }
+
+  @Permissions("MANAGE_PROJECT")
+  @InferMethod(endpoints.projects.getProject)
+  getProject(@Context() context: IContext) {
+    return createAsyncController(
+      endpoints.projects.getProject,
+      context,
+      this.projectService.getProject,
     );
   }
 
