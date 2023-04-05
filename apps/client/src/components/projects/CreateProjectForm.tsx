@@ -2,51 +2,40 @@ import service from "@/service";
 import { handleReqError } from "@/utils/error.utils";
 import { promiseToast } from "@/utils/toast.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { endpoints } from "api-interface";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const createUserSchema = endpoints.users.create.bodySchema;
+const createProjectSchema = endpoints.projects.create.bodySchema;
 
-type ICreateUserData = z.infer<typeof createUserSchema>;
+type ICreateProjectData = z.infer<typeof createProjectSchema>;
 
 export default function Create({
   isOpen,
   onClose,
-  refetchUsers,
+  refetchProjects,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  refetchUsers: () => void;
+  refetchProjects: () => void;
 }) {
-  const { data: allPermissions } = useQuery({
-    queryKey: ["user-permissions"],
-    queryFn: () => service(endpoints.users.getAllPermissions)({}),
-  });
-
   const {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
-    setValue,
-  } = useForm<ICreateUserData>({
-    defaultValues: {
-      permissions: [],
-    },
-    resolver: zodResolver(createUserSchema),
+  } = useForm<ICreateProjectData>({
+    resolver: zodResolver(createProjectSchema),
   });
 
-  const handleCreateUser = async (data: ICreateUserData) => {
+  const handleCreateProject = async (data: ICreateProjectData) => {
     try {
       await promiseToast(
-        service(endpoints.users.create)({
+        service(endpoints.projects.create)({
           body: data,
-        }).then(refetchUsers),
+        }).then(refetchProjects),
         {
-          loading: "Adding User...",
-          success: "User Added",
+          loading: "Adding Project...",
+          success: "Project Added",
         },
       ).catch(handleReqError);
     } catch (error) {
@@ -87,78 +76,48 @@ export default function Create({
             <div className="h-screen flex items-center">
               <div>
                 <h2 className="text-lg font-medium mb-4 text-gray-800">
-                  Sign Up
+                  Create Project
                 </h2>
                 <form
                   className="bg-white bg-opacity-70 space-y-6 border-2 border-gray-200 rounded-md p-4"
-                  onSubmit={handleSubmit(handleCreateUser)}
+                  onSubmit={handleSubmit(handleCreateProject)}
                 >
                   <div>
                     <label className="block text-gray-700 font-bold mb-2">
-                      Username
+                      Name
                     </label>
                     <input
                       type="text"
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 border-gray-200"
-                      placeholder="Username"
-                      {...register("username")}
+                      placeholder="Name"
+                      {...register("name")}
                     />
-                    <p className="text-error">{errors.username?.message}</p>
+                    <p className="text-error">{errors.name?.message}</p>
                   </div>
                   <div>
                     <label className="block text-gray-700 font-bold mb-2">
-                      Password
+                      Url (Tweet Link)
                     </label>
                     <input
-                      type="password"
+                      type="url"
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 border-gray-200"
-                      placeholder="Password"
-                      {...register("password")}
+                      placeholder="url"
+                      {...register("url")}
                     />
-                    <p className="text-error">{errors.password?.message}</p>
+                    <p className="text-error">{errors.url?.message}</p>
                   </div>
                   <div>
                     <label className="block text-gray-700 font-bold mb-2">
-                      Confirm Password
+                      Description
                     </label>
-                    <input
-                      type="password"
+                    <textarea
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 border-gray-200"
-                      placeholder="Confirm Password"
-                      {...register("confirmPassword")}
+                      placeholder="Description..."
+                      {...register("description")}
                     />
-                    <p className="text-error">
-                      {errors.confirmPassword?.message}
-                    </p>
+                    <p className="text-error">{errors.description?.message}</p>
                   </div>
-                  <div>
-                    <label className="block text-gray-700 font-bold mb-2">
-                      Permissions
-                    </label>
-                    {allPermissions?.map((p) => (
-                      <div key={p} className="flex items-center mb-2">
-                        <input
-                          type="checkbox"
-                          className="form-checkbox h-5 w-5 text-green-500"
-                          defaultChecked={getValues("permissions").includes(p)}
-                          onChange={(e) =>
-                            e.target.checked
-                              ? setValue("permissions", [
-                                  ...getValues("permissions"),
-                                  p,
-                                ])
-                              : setValue(
-                                  "permissions",
-                                  getValues("permissions").filter(
-                                    (perm) => perm !== p,
-                                  ),
-                                )
-                          }
-                        />
-                        <span className="ml-2 text-gray-700">{p}</span>
-                      </div>
-                    ))}
-                  </div>
+
                   <div>
                     <div className="flex justify-center">
                       <button

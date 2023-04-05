@@ -215,10 +215,7 @@ const UserEditForm = ({
                             )
                       }
                     />
-                    <label
-                      htmlFor="permissions"
-                      className="ml-2 block text-sm text-gray-700 font-semibold"
-                    >
+                    <label className="ml-2 block text-sm text-gray-700 font-semibold">
                       {p}
                     </label>
                   </div>

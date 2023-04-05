@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -29,9 +30,44 @@ export class ProjectService {
     },
   );
 
+  getProject = createAsyncService<typeof endpoints.projects.getProject>(
+    async ({ param }, { user }) => {
+      if (!user) throw new UnauthorizedException();
+      const userId = user.id;
+      const id = param.id;
+      const project = this.prisma.project.findFirst({
+        where: {
+          id,
+          authorId: userId,
+        },
+        include: {
+          author: { select: { id: true, permissions: true, username: true } },
+          newTweetPosts:true,
+          retweetPosts: true,
+          likeTweets: true,
+        },
+      });
+      if (!project) {
+        throw new BadRequestException("User not Found");
+      } else {
+        return project;
+      }
+    },
+  );
+
   create = createAsyncService<typeof endpoints.projects.create>(
     async ({ body }, { user }) => {
       if (!user) throw new UnauthorizedException();
+
+      body.url = body.url.replace(/\s+/g, "");
+      const existingProject = await this.prisma.project.findFirst({
+        where: {
+          url: body.url,
+        },
+      });
+      if (!!existingProject)
+        throw new BadRequestException("Url already in list");
+
       await this.prisma.project.create({
         data: { ...body, authorId: user.id },
       });
