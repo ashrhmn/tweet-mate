@@ -35,23 +35,20 @@ export class ProjectService {
       if (!user) throw new UnauthorizedException();
       const userId = user.id;
       const id = param.id;
-      const project = this.prisma.project.findFirst({
+      const project = await this.prisma.project.findFirst({
         where: {
           id,
           authorId: userId,
         },
         include: {
           author: { select: { id: true, permissions: true, username: true } },
-          newTweetPosts:true,
+          newTweetPosts: true,
           retweetPosts: true,
           likeTweets: true,
         },
       });
-      if (!project) {
-        throw new BadRequestException("User not Found");
-      } else {
-        return project;
-      }
+      if (!project) throw new BadRequestException("User not Found");
+      return project;
     },
   );
 
