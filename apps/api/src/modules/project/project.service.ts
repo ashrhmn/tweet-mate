@@ -17,7 +17,7 @@ export class ProjectService {
       if (!user) throw new UnauthorizedException();
       const userId = user.id;
 
-      return this.prisma.project.findMany({
+      return await this.prisma.project.findMany({
         where: {
           author: {
             id: userId,
@@ -47,7 +47,7 @@ export class ProjectService {
           likeTweets: true,
         },
       });
-      if (!project) throw new BadRequestException("User not Found");
+      if (!project) throw new BadRequestException("Project not Found");
       return project;
     },
   );

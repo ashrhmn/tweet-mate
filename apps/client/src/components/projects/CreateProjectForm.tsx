@@ -84,7 +84,7 @@ export default function Create({
                 >
                   <div>
                     <label className="block text-gray-700 font-bold mb-2">
-                      Name
+                      Name / Title
                     </label>
                     <input
                       type="text"

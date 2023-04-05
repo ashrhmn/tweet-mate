@@ -98,7 +98,7 @@ const Projects = () => {
                   className="text-xs font-semibold tracking-wide text-left 
                 text-white uppercase border-b bg-gradient-to-r from-purple-900 to-purple-700"
                 >
-                  <th className="px-4 py-3">Name</th>
+                  <th className="px-4 py-3">Name / Title</th>
                   <th className="px-4 py-3">URL</th>
                   <th className="px-4 py-3">Description</th>
                   <th className="px-4 py-3">Actions</th>
@@ -108,7 +108,12 @@ const Projects = () => {
                 {filteredProjects.map((project) => (
                   <tr key={project.id} className="text-gray-600">
                     <td className="px-4 py-3 text-ms font-semibold border">
-                      <Link href={`project/${project.id}`}>{project.name}</Link>
+                      <Link
+                        href={`project/${project.id}`}
+                        className=" hover:text-pink-800"
+                      >
+                        {project.name}
+                      </Link>
                     </td>
                     <td className="px-4 py-3 text-xs font-semibold border">
                       <a
