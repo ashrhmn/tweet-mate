@@ -58,7 +58,7 @@ const memberUserSchema = z.object({
 const newTweetPostSchema = z.object({
   id: z.string(),
   projectId: z.string(),
-  content: z.string(),
+  content: z.string().nullable(),
   media: z.string().array(),
 });
 
@@ -234,6 +234,31 @@ export const endpoints = {
       ...defaultConfig,
       pattern: "users/permissions",
       responseSchema: z.nativeEnum(PERMISSIONS).array(),
+    },
+  },
+  newTweetPosts: {
+    getAll: {
+      ...defaultConfig,
+      pattern: "newTweet/posts/:projectId",
+      paramSchema: z.object({ projectId: z.string() }),
+      responseSchema: newTweetPostSchema
+        .and(z.object({ project: projectSchema }))
+        .array(),
+    },
+    create: {
+      ...defaultConfig,
+      pattern: "newTweet/post/create/:projectId",
+      method: "POST",
+      paramSchema: z.object({ projectId: z.string() }),
+      bodySchema: newTweetPostSchema
+        .omit({
+          id: true,
+          projectId: true,
+          content: true,
+          media: true,
+        })
+        .and(z.object({ content: z.string().optional() })),
+      responseSchema: z.string(),
     },
   },
 } as const;
