@@ -11,12 +11,12 @@ export class NewTweetPostController {
   constructor(private readonly newTweetPostService: NewTweetPostService) {}
 
   @Permissions("MANAGE_PROJECT")
-  @InferMethod(endpoints.newTweetPosts.getAll)
-  getAll(@Context() contex: IContext) {
+  @InferMethod(endpoints.newTweetPosts.getAllByProjectId)
+  getAllByProjectId(@Context() contex: IContext) {
     return createAsyncController(
-      endpoints.newTweetPosts.getAll,
+      endpoints.newTweetPosts.getAllByProjectId,
       contex,
-      this.newTweetPostService.getAll,
+      this.newTweetPostService.getAllByProjectId,
     );
   }
 
@@ -27,6 +27,16 @@ export class NewTweetPostController {
       endpoints.newTweetPosts.create,
       contex,
       this.newTweetPostService.create,
+    );
+  }
+
+  @Permissions("MANAGE_PROJECT")
+  @InferMethod(endpoints.newTweetPosts.delete)
+  delete(@Context() contex: IContext) {
+    return createAsyncController(
+      endpoints.newTweetPosts.delete,
+      contex,
+      this.newTweetPostService.delete,
     );
   }
 }

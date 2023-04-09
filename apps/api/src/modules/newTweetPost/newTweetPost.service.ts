@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { endpoints } from "api-interface";
 import { createAsyncService } from "src/utils/common.utils";
 import { PrismaService } from "../prisma/prisma.service";
@@ -7,21 +11,21 @@ import { PrismaService } from "../prisma/prisma.service";
 export class NewTweetPostService {
   constructor(private readonly prisma: PrismaService) {}
 
-  getAll = createAsyncService<typeof endpoints.newTweetPosts.getAll>(
-    async ({ param }, { user }) => {
-      if (!user) throw new UnauthorizedException();
-      const projectId = param.projectId;
+  getAllByProjectId = createAsyncService<
+    typeof endpoints.newTweetPosts.getAllByProjectId
+  >(async ({ param }, { user }) => {
+    if (!user) throw new UnauthorizedException();
+    const projectId = param.projectId;
 
-      return await this.prisma.newTweetPost.findMany({
-        where: {
-          projectId,
-        },
-        include: {
-          project: true,
-        },
-      });
-    },
-  );
+    return await this.prisma.newTweetPost.findMany({
+      where: {
+        projectId,
+      },
+      include: {
+        project: true,
+      },
+    });
+  });
 
   create = createAsyncService<typeof endpoints.newTweetPosts.create>(
     async ({ body, param }, { user }) => {
@@ -33,6 +37,23 @@ export class NewTweetPostService {
         data: { ...body, projectId },
       });
       return "created";
+    },
+  );
+
+  delete = createAsyncService<typeof endpoints.newTweetPosts.delete>(
+    async ({ param: { id } }, { user }) => {
+      if (!user) throw new UnauthorizedException();
+      const newTweetPost = await this.prisma.newTweetPost.findFirst({
+        where: {
+          id,
+          project: {
+            authorId: user.id,
+          },
+        },
+      });
+      if (!newTweetPost) throw new NotFoundException();
+      await this.prisma.newTweetPost.delete({ where: { id } });
+      return "deleted";
     },
   );
 }

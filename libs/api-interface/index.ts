@@ -130,22 +130,19 @@ export const endpoints = {
       pattern: "project/:id",
       method: "GET",
       paramSchema: z.object({ id: z.string() }),
-      responseSchema: projectSchema.and(z.object({ author: userSchema })),
+      responseSchema: projectSchema
+        .passthrough()
+        .and(z.object({ author: userSchema })),
     },
     create: {
       ...defaultConfig,
       pattern: "projects",
       method: "POST",
-      bodySchema: projectSchema
-        .omit({
-          id: true,
-          authorId: true,
-          description: true,
-          newTweetPosts: true,
-          retweetPosts: true,
-          likeTweets: true,
-        })
-        .and(z.object({ description: z.string().optional() })),
+      bodySchema: z.object({
+        name: z.string().min(3, "Name must be at least 3 characters long"),
+        description: z.string().optional(),
+        url: z.string().optional(),
+      }),
       responseSchema: z.string(),
     },
     delete: {
@@ -237,7 +234,7 @@ export const endpoints = {
     },
   },
   newTweetPosts: {
-    getAll: {
+    getAllByProjectId: {
       ...defaultConfig,
       pattern: "newTweet/posts/:projectId",
       paramSchema: z.object({ projectId: z.string() }),
@@ -258,6 +255,47 @@ export const endpoints = {
           media: true,
         })
         .and(z.object({ content: z.string().optional() })),
+      responseSchema: z.string(),
+    },
+    delete: {
+      ...defaultConfig,
+      pattern: "newTweet/post/:id",
+      method: "DELETE",
+      paramSchema: z.object({ id: z.string() }),
+      responseSchema: z.string(),
+    },
+  },
+  existingTweetPosts: {
+    getAllReTweetByProjectId: {
+      ...defaultConfig,
+      pattern: "existingTweet/posts/:projectId",
+      paramSchema: z.object({ projectId: z.string() }),
+      responseSchema: existingTweetPostSchema
+        .and(z.object({ project: projectSchema }))
+        .array(),
+    },
+    createReTweet: {
+      ...defaultConfig,
+      pattern: "reTweet/post/create/:projectId",
+      method: "POST",
+      paramSchema: z.object({ projectId: z.string() }),
+      bodySchema: existingTweetPostSchema.omit({
+        id: true,
+        likeOfProjectId: true,
+        retweetOfProjectId: true,
+      }),
+      responseSchema: z.string(),
+    },
+    createLikeOfTweet: {
+      ...defaultConfig,
+      pattern: "likeOfTweet/post/create/:projectId",
+      method: "POST",
+      paramSchema: z.object({ projectId: z.string() }),
+      bodySchema: existingTweetPostSchema.omit({
+        id: true,
+        likeOfProjectId: true,
+        retweetOfProjectId: true,
+      }),
       responseSchema: z.string(),
     },
   },

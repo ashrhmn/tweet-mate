@@ -56,14 +56,20 @@ export class ProjectService {
     async ({ body }, { user }) => {
       if (!user) throw new UnauthorizedException();
 
-      body.url = body.url.replace(/\s+/g, "");
-      const existingProject = await this.prisma.project.findFirst({
-        where: {
-          url: body.url,
-        },
-      });
-      if (!!existingProject)
-        throw new BadRequestException("Url already in list");
+      if (body.url == "") {
+        console.log("url null");
+        delete body.url;
+      } else if (body.url !== undefined) {
+        body.url = body.url.replace(/\s+/g, "");
+        const existingProject = await this.prisma.project.findFirst({
+          where: {
+            url: body.url,
+          },
+        });
+        if (!!existingProject)
+          throw new BadRequestException("Url already in list");
+      }
+      console.log(body);
 
       await this.prisma.project.create({
         data: { ...body, authorId: user.id },

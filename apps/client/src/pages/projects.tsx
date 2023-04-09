@@ -51,15 +51,20 @@ const Projects = () => {
 
   const handleDeleteProject = async (id: string) => {
     await promiseToast(
-      service(endpoints.projects.delete)({ param: { id } }).then(
-        () => refetchProjects,
-      ),
+      service(endpoints.projects.delete)({
+        param: { id },
+      }).then(() => refetchProjects),
       {
         loading: "Deleting Project....",
         success: "Project Deleted",
       },
     ).catch(handleReqError);
   };
+
+  const origin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "";
 
   return (
     <>
@@ -115,15 +120,31 @@ const Projects = () => {
                         {project.name}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-xs font-semibold border">
-                      <a
-                        href={project.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
-                      >
-                        {project.url}
-                      </a>
+                    <td className="px-4 py-3 text-xs font-semibold border whitespace-nowrap">
+                      <div className="flex items-center">
+                        <a
+                          href={origin + "/" + project.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          {origin + "/" + project.url}
+                        </a>
+                        <svg
+                          className="ml-2 hover:bg-blue-400 text-blue-900 font-bold rounded w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              origin + "/" + project.url,
+                            );
+                          }}
+                        >
+                          <path d="M17 21H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6a1 1 0 0 1 0 2H7v12h10V9h2a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2z"></path>
+                        </svg>
+                      </div>
                     </td>
                     <td className="px-4 py-3 border">
                       <div className="flex items-center">

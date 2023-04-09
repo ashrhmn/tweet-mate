@@ -1,10 +1,8 @@
-import Create from "@/components/newTweetPosts/createNewTweetPostForm";
+import NewTweetPostList from "@/components/newTweetPosts/newTweetPostList";
 import service from "@/service";
 import { useQuery } from "@tanstack/react-query";
 import { endpoints } from "api-interface";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
 
 const getProjectById = (id: string) =>
   service(endpoints.projects.getProject)({ param: { id } });
@@ -26,6 +24,13 @@ export default function ProjectDetails() {
 
   if (getProjectStatus === "loading") return <div>Loading...</div>;
   if (getProjectStatus === "error") return <div>Project not found</div>;
+
+  const origin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "";
+
+  console.log(project.retweetPosts);
 
   return (
     <div>
@@ -112,16 +117,16 @@ export default function ProjectDetails() {
                   </div>
                   <div className="sm:col-span-1">
                     <dt className="text-sm leading-5 font-medium text-gray-500">
-                      URL (Tweet Link)
+                      Public Page URL
                     </dt>
                     <dd className="mt-1 text-sm leading-5 text-gray-900">
                       <a
-                        href={project?.url}
+                        href={window.location.origin + "/" + project?.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline"
                       >
-                        {project?.url}
+                        {window.location.origin + "/" + project?.url}
                       </a>
                     </dd>
                   </div>
@@ -152,132 +157,94 @@ export default function ProjectDetails() {
       <br />
       <br />
 
-      <NewTweetPosts projectId={project.id} />
+      <div>
+        <div className="flex justify-stretch">
+          <NewTweetPostList projectId={project.id} />
+          {/* <ReTweetPostList
+            reTweetPostList={project.retweetPosts!}
+            projectId={project.id}
+          /> */}
+        </div>
+      </div>
     </div>
   );
 }
 
-const getNewTweetPostsByProjectId = (projectId: string) =>
-  service(endpoints.newTweetPosts.getAll)({ param: { projectId } });
+// const NewTweetPosts = ({ projectId }: { projectId: string }) => {
+//   const [query, setQuery] = useState("");
+//   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+//   const [text, setText] = useState("");
 
-const NewTweetPosts = ({ projectId }: { projectId: string }) => {
-  const [query, setQuery] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+//   const handleSidebarToggle = () => {
+//     setIsSidebarOpen(!isSidebarOpen);
+//   };
 
-  const handleSidebarToggle = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+//   const {
+//     data: getNewTweetPosts,
+//     status: getNewTweetPostsStatus,
+//     refetch: refetchNewTweetPosts,
+//   } = useQuery({
+//     queryKey: ["getNewTweetPosts"],
+//     queryFn: () => getNewTweetPostsByProjectId(projectId!),
+//     enabled: !!projectId,
+//   });
 
-  const {
-    data: getNewTweetPosts,
-    status: getNewTweetPostsStatus,
-    refetch: refetchNewTweetPosts,
-  } = useQuery({
-    queryKey: ["getNewTweetPosts"],
-    queryFn: () => getNewTweetPostsByProjectId(projectId!),
-    enabled: !!projectId,
-  });
+//   const filteredNewTweetPosts = useMemo(() => {
+//     if (!getNewTweetPosts) return [];
+//     if (!query) return getNewTweetPosts;
+//     return getNewTweetPosts.filter((newTweetPost) =>
+//       newTweetPost.id.toLowerCase().includes(query),
+//     );
+//   }, [getNewTweetPosts, query]);
 
-  const filteredNewTweetPosts = useMemo(() => {
-    if (!getNewTweetPosts) return [];
-    if (!query) return getNewTweetPosts;
-    return getNewTweetPosts.filter((newTweetPost) =>
-      newTweetPost.id.toLowerCase().includes(query),
-    );
-  }, [getNewTweetPosts, query]);
+//   if (getNewTweetPostsStatus === "loading") return <div>Loading...</div>;
+//   if (getNewTweetPostsStatus === "error")
+//     return <div>New Tweet Posts not found</div>;
 
-  if (getNewTweetPostsStatus === "loading") return <div>Loading...</div>;
-  if (getNewTweetPostsStatus === "error")
-    return <div>New Tweet Posts not found</div>;
+//   return (
+//     <div>
+//       <div className="flex justify-stretch">
 
-  return (
-    <div>
-      <button
-        className="relative inline-block py-2 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-lime-900 to-pink-950 hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50"
-        onClick={handleSidebarToggle}
-      >
-        <span className="relative z-10">Create New Tweet Post</span>
-        <span className="absolute top-0 left-0 w-full h-full bg-white opacity-10 rounded-lg filter blur-md -z-1 animate-pulse"></span>
-      </button>
-      <Create
-        key="create"
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        projectId={projectId}
-        refetchNewTweetPosts={refetchNewTweetPosts}
-      />
-      <br />
-      <br />
+//
 
-      <div className="w-full overflow-hidden rounded-lg shadow-lg">
-        <div className="w-full overflow-x-auto">
-          <div className="flex justify-between items-center bg-gradient-to-r from-purple-900 to-purple-700 px-4 py-3">
-            <h1 className="text-white font-bold text-lg">
-              New Tweet Post List
-            </h1>
-            <input
-              type="text"
-              placeholder="Search"
-              className="px-3 py-1 text-gray-700 border-2 rounded-md 
-              focus:outline-none focus:ring-2 focus:ring-purple-600 
-              focus:border-transparent"
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </div>
-          <table className="w-full whitespace-no-wrap table-auto">
-            <thead>
-              <tr
-                className="text-xs font-semibold tracking-wide text-left 
-                text-white uppercase border-b bg-gradient-to-r from-purple-900 to-purple-700"
-              >
-                <th className="px-4 py-3">ID</th>
-                <th className="px-4 py-3">Project Name / Title</th>
-                <th className="px-4 py-3">Content</th>
-                <th className="px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-gray-100">
-              {filteredNewTweetPosts.map((post) => (
-                <tr key={post.id} className="text-gray-600">
-                  <td className="px-4 py-3 border">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-sm font-medium">{post.id}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-ms font-semibold border">
-                    <Link href={`user/${post.id}`}>{post.project.name}</Link>
-                  </td>
-                  <td className="px-4 py-3 border">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-sm font-medium">{post.content}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-xs font-semibold border whitespace-nowrap">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                      Edit
-                    </button>
-                    <button
-                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
-                      onClick={() => {
-                        if (window.confirm("Want to delete the user?")) {
-                        }
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <br />
-      <br />
-    </div>
-  );
-};
+//         <div className="w-1/3 px-2">
+//           <button
+//             className="relative inline-block py-2 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-lime-900 to-pink-950 hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50"
+//             onClick={handleSidebarToggle}
+//           >
+//             <span className="relative z-10">Add Tweet to Like</span>
+//             <span className="absolute top-0 left-0 w-full h-full bg-white opacity-10 rounded-lg filter blur-md -z-1 animate-pulse"></span>
+//           </button>
+//           <Create
+//             key="create"
+//             isOpen={isSidebarOpen}
+//             onClose={() => setIsSidebarOpen(false)}
+//             projectId={projectId}
+//             refetchNewTweetPosts={refetchNewTweetPosts}
+//           />
+//           <br />
+//           <table className="w-full bg-green-400 rounded-lg shadow-lg border-collapse border">
+//             <thead className="bg-green-900">
+//               <tr>
+//                 <th className="py-2 text-white font-medium">Tweet Content</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               <tr className="border-b-4 border-neutral-300 ">
+//                 <td className="py-2 px-4 text-white font-medium">Data 2</td>
+//               </tr>
+//               <tr className="border-b-4 border-neutral-300 ">
+//                 <td className="py-2 px-4 text-white font-medium">Data 2</td>
+//               </tr>
+//               <tr>
+//                 <td className="py-2 px-4 text-white font-medium">Data 3</td>
+//               </tr>
+//             </tbody>
+//           </table>
+//         </div>
+//       </div>
+//       <br />
+//       <br />
+//     </div>
+//   );
+// };
