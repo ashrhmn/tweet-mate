@@ -52,6 +52,28 @@ export class ProjectService {
     },
   );
 
+  getProjectByUrl = createAsyncService<
+    typeof endpoints.projects.getProjectByUrl
+  >(async ({ param }, { user }) => {
+    if (!user) throw new UnauthorizedException();
+    const userId = user.id;
+    const url = param.url;
+    const project = await this.prisma.project.findFirst({
+      where: {
+        url,
+        authorId: userId,
+      },
+      include: {
+        author: { select: { id: true, permissions: true, username: true } },
+        newTweetPosts: true,
+        retweetPosts: true,
+        likeTweets: true,
+      },
+    });
+    if (!project) throw new BadRequestException("Project not Found");
+    return project;
+  });
+
   create = createAsyncService<typeof endpoints.projects.create>(
     async ({ body }, { user }) => {
       if (!user) throw new UnauthorizedException();

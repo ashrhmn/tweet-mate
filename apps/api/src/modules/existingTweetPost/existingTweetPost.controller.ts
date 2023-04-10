@@ -12,15 +12,15 @@ export class ExistingTweetPostController {
     private readonly existingTweetPostService: ExistingTweetPostService,
   ) {}
 
-  @Permissions("MANAGE_PROJECT")
-  @InferMethod(endpoints.existingTweetPosts.getAllReTweetByProjectId)
-  getAllReTweetByProjectId(@Context() contex: IContext) {
-    return createAsyncController(
-      endpoints.existingTweetPosts.getAllReTweetByProjectId,
-      contex,
-      this.existingTweetPostService.getAllReTweetByProjectId,
-    );
-  }
+  // @Permissions("MANAGE_PROJECT")
+  // @InferMethod(endpoints.existingTweetPosts.getAllReTweetByProjectId)
+  // getAllReTweetByProjectId(@Context() contex: IContext) {
+  //   return createAsyncController(
+  //     endpoints.existingTweetPosts.getAllReTweetByProjectId,
+  //     contex,
+  //     this.existingTweetPostService.getAllReTweetByProjectId,
+  //   );
+  // }
 
   @Permissions("MANAGE_PROJECT")
   @InferMethod(endpoints.existingTweetPosts.createReTweet)

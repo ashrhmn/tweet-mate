@@ -7,21 +7,21 @@ import { PrismaService } from "../prisma/prisma.service";
 export class ExistingTweetPostService {
   constructor(private readonly prisma: PrismaService) {}
 
-  getAllReTweetByProjectId = createAsyncService<
-    typeof endpoints.existingTweetPosts.getAllReTweetByProjectId
-  >(async ({ param }, { user }) => {
-    if (!user) throw new UnauthorizedException();
-    const retweetOfProjectId = param.projectId;
+  // getAllReTweetByProjectId = createAsyncService<
+  //   typeof endpoints.existingTweetPosts.getAllReTweetByProjectId
+  // >(async ({ param }, { user }) => {
+  //   if (!user) throw new UnauthorizedException();
+  //   const retweetOfProjectId = param.projectId;
 
-    return await this.prisma.existingTweetPost.findMany({
-      where: {
-        retweetOfProjectId,
-      },
-      include: {
-        retweetOfProject: true,
-      },
-    });
-  });
+  //   return await this.prisma.existingTweetPost.findMany({
+  //     where: {
+  //       retweetOfProjectId,
+  //     },
+  //     include: {
+  //       retweetOfProject: true,
+  //     },
+  //   });
+  // });
 
   createReTweet = createAsyncService<
     typeof endpoints.existingTweetPosts.createReTweet
@@ -29,6 +29,8 @@ export class ExistingTweetPostService {
     if (!user) throw new UnauthorizedException();
 
     const projectId = param.projectId;
+
+    body.tweetUrl = body.tweetUrl.replace(/\s+/g, "");
 
     await this.prisma.existingTweetPost.create({
       data: { ...body, retweetOfProjectId: projectId },
@@ -42,6 +44,8 @@ export class ExistingTweetPostService {
     if (!user) throw new UnauthorizedException();
 
     const projectId = param.projectId;
+
+    body.tweetUrl = body.tweetUrl.replace(/\s+/g, "");
 
     await this.prisma.existingTweetPost.create({
       data: { ...body, likeOfProjectId: projectId },

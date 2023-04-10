@@ -2,7 +2,7 @@ import service from "@/service";
 import { useQuery } from "@tanstack/react-query";
 import { endpoints } from "api-interface";
 import { useMemo, useState } from "react";
-import { Share } from "react-twitter-widgets";
+import { TwitterShareButton } from "react-twitter-embed";
 import Create from "./createNewTweetPostForm";
 
 const getNewTweetPostsByProjectId = (projectId: string) =>
@@ -39,7 +39,7 @@ export default function NewTweetPostList({ projectId }: { projectId: string }) {
     return <div>New Tweet Posts not found</div>;
 
   return (
-    <div className="w-1/3 px-2">
+    <div className="w-full sm:w-1/3 p-4">
       <button
         className="relative inline-block py-2 px-4 rounded-lg text-white font-semibold bg-gradient-to-r from-lime-900 to-pink-950 hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50"
         onClick={handleSidebarToggle}
@@ -77,7 +77,7 @@ export default function NewTweetPostList({ projectId }: { projectId: string }) {
                       />
                     </div>
                     <div className="flex justify-end mt-2">
-                      <Share
+                      <TwitterShareButton
                         url=""
                         options={{
                           size: "large",

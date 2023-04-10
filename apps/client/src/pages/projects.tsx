@@ -61,10 +61,10 @@ const Projects = () => {
     ).catch(handleReqError);
   };
 
-  const origin =
-    typeof window !== "undefined" && window.location.origin
-      ? window.location.origin
-      : "";
+  // const origin =
+  //   typeof window !== "undefined" && window.location.origin
+  //     ? window.location.origin
+  //     : "";
 
   return (
     <>
@@ -123,12 +123,18 @@ const Projects = () => {
                     <td className="px-4 py-3 text-xs font-semibold border whitespace-nowrap">
                       <div className="flex items-center">
                         <a
-                          href={origin + "/" + project.url}
+                          href={
+                            window.location.origin +
+                            "/projecturl/" +
+                            project.url
+                          }
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:underline"
                         >
-                          {origin + "/" + project.url}
+                          {window.location.origin +
+                            "/projecturl/" +
+                            project.url}
                         </a>
                         <svg
                           className="ml-2 hover:bg-blue-400 text-blue-900 font-bold rounded w-6 h-6"
@@ -138,7 +144,9 @@ const Projects = () => {
                           xmlns="http://www.w3.org/2000/svg"
                           onClick={() => {
                             navigator.clipboard.writeText(
-                              origin + "/" + project.url,
+                              window.location.origin +
+                                "/projecturl/" +
+                                project.url,
                             );
                           }}
                         >

@@ -38,19 +38,36 @@ export default function Create({
   });
 
   const handleCreateReTweet = async (data: ICreateReTweetData) => {
-    try {
-      await promiseToast(
-        service(endpoints.existingTweetPosts.createReTweet)({
-          body: data,
-          param: { projectId },
-        }).then(refetchProject),
-        {
-          loading: "Adding ReTweet Post...",
-          success: "ReTweet Post Added",
-        },
-      ).catch(handleReqError);
-    } catch (error) {
-      handleReqError(error);
+    if (isRetweet) {
+      try {
+        await promiseToast(
+          service(endpoints.existingTweetPosts.createReTweet)({
+            body: data,
+            param: { projectId },
+          }).then(refetchProject),
+          {
+            loading: "Adding ReTweet Post...",
+            success: "ReTweet Post Added",
+          },
+        ).catch(handleReqError);
+      } catch (error) {
+        handleReqError(error);
+      }
+    } else {
+      try {
+        await promiseToast(
+          service(endpoints.existingTweetPosts.createLikeOfTweet)({
+            body: data,
+            param: { projectId },
+          }).then(refetchProject),
+          {
+            loading: "Adding Like Of Tweet...",
+            success: "Like Of Tweet Added",
+          },
+        ).catch(handleReqError);
+      } catch (error) {
+        handleReqError(error);
+      }
     }
   };
 
@@ -93,43 +110,61 @@ export default function Create({
                   className="bg-white bg-opacity-70 space-y-6 border-2 border-gray-200 rounded-md p-4"
                   onSubmit={handleSubmit(handleCreateReTweet)}
                 >
-                  {/* <div>
-                    <label className="block text-gray-700 font-bold mb-2">
-                      Name / Title
-                    </label>
-                    <input
-                      type="text"
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 border-gray-200"
-                      placeholder="Name"
-                      {...register("name")}
-                    />
-                    <p className="text-error">{errors.name?.message}</p>
-                  </div> */}
-                  <div>
-                    <div className="pb-2">
-                      <label className="block text-gray-700 font-bold mb-2">
-                        Tweet Url
-                      </label>
-                      <input
-                        type="url"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 border-gray-200"
-                        placeholder="url"
-                        {...register("tweetUrl")}
-                      />
-                      <p className="text-error">{errors.tweetUrl?.message}</p>
-                    </div>
-
+                  {isRetweet && (
                     <div>
-                      <div className="flex justify-center">
-                        <button
-                          type="submit"
-                          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        >
-                          Add ReTweet
-                        </button>
+                      <div className="pb-2">
+                        <label className="block text-gray-700 font-bold mb-2">
+                          Tweet Url
+                        </label>
+                        <input
+                          type="url"
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 border-gray-200"
+                          placeholder="url"
+                          {...register("tweetUrl")}
+                        />
+                        <p className="text-error">{errors.tweetUrl?.message}</p>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-center">
+                          <button
+                            type="submit"
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                          >
+                            Add ReTweet
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
+
+                  {isRetweet || (
+                    <div>
+                      <div className="pb-2">
+                        <label className="block text-gray-700 font-bold mb-2">
+                          Tweet Url
+                        </label>
+                        <input
+                          type="url"
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 border-gray-200"
+                          placeholder="url"
+                          {...register("tweetUrl")}
+                        />
+                        <p className="text-error">{errors.tweetUrl?.message}</p>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-center">
+                          <button
+                            type="submit"
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                          >
+                            Add Like Of Tweet
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </form>
               </div>
             </div>

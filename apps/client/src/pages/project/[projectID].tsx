@@ -1,3 +1,5 @@
+import LikeOfTweetPostList from "@/components/existingTweetPosts/likeOfTweetPostList";
+import ReTweetPostList from "@/components/existingTweetPosts/reTweetPostList";
 import NewTweetPostList from "@/components/newTweetPosts/newTweetPostList";
 import service from "@/service";
 import { useQuery } from "@tanstack/react-query";
@@ -30,19 +32,19 @@ export default function ProjectDetails() {
       ? window.location.origin
       : "";
 
-  console.log(project.retweetPosts);
+  //console.log(project.retweetPosts);
 
   return (
     <div>
       <div className="bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="pt-32 pb-12 md:pt-20 md:pb-12">
+          <div className="pt-28 pb-10 md:pt-16 md:pb-8">
             <div className="md:flex md:items-center md:justify-between">
               <div className="flex-1 min-w-0">
                 <h2 className="text-4xl font-bold leading-10 text-gray-900 sm:text-5xl sm:leading-none sm:truncate">
                   {project?.name}
                 </h2>
-                <div className="mt-4 flex flex-wrap">
+                {/* <div className="mt-4 flex flex-wrap">
                   <div className="flex items-center text-sm leading-5 text-gray-500 mr-6">
                     <svg
                       className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
@@ -71,7 +73,7 @@ export default function ProjectDetails() {
                     </svg>
                     Project Date Here
                   </div>
-                </div>
+                </div> */}
               </div>
               <div className="mt-5 flex lg:mt-0 lg:ml-4">
                 <span className="hidden sm:block">
@@ -158,12 +160,18 @@ export default function ProjectDetails() {
       <br />
 
       <div>
-        <div className="flex justify-stretch">
+        <div className="flex flex-wrap justify-center">
           <NewTweetPostList projectId={project.id} />
-          {/* <ReTweetPostList
-            reTweetPostList={project.retweetPosts!}
+          <ReTweetPostList
+            reTweetPostList={project.retweetPosts}
             projectId={project.id}
-          /> */}
+            refetchProject={refetchProject}
+          />
+          <LikeOfTweetPostList
+            likeOfTweetPostList={project.likeTweets}
+            projectId={project.id}
+            refetchProject={refetchProject}
+          />
         </div>
       </div>
     </div>

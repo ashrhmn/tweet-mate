@@ -65,8 +65,8 @@ const newTweetPostSchema = z.object({
 const existingTweetPostSchema = z.object({
   id: z.string(),
   tweetUrl: z.string(),
-  retweetOfProjectId: z.string(),
-  likeOfProjectId: z.string(),
+  retweetOfProjectId: z.string().nullable(),
+  likeOfProjectId: z.string().nullable(),
 });
 
 const projectSchema = z.object({
@@ -131,8 +131,21 @@ export const endpoints = {
       method: "GET",
       paramSchema: z.object({ id: z.string() }),
       responseSchema: projectSchema
-        .passthrough()
-        .and(z.object({ author: userSchema })),
+        .and(z.object({ author: userSchema }))
+        .and(z.object({ newTweetPosts: newTweetPostSchema.array() }))
+        .and(z.object({ retweetPosts: existingTweetPostSchema.array() }))
+        .and(z.object({ likeTweets: existingTweetPostSchema.array() })),
+    },
+    getProjectByUrl: {
+      ...defaultConfig,
+      pattern: "projecturl/:url",
+      method: "GET",
+      paramSchema: z.object({ url: z.string() }),
+      responseSchema: projectSchema
+        .and(z.object({ author: userSchema }))
+        .and(z.object({ newTweetPosts: newTweetPostSchema.array() }))
+        .and(z.object({ retweetPosts: existingTweetPostSchema.array() }))
+        .and(z.object({ likeTweets: existingTweetPostSchema.array() })),
     },
     create: {
       ...defaultConfig,
@@ -271,7 +284,7 @@ export const endpoints = {
       pattern: "existingTweet/posts/:projectId",
       paramSchema: z.object({ projectId: z.string() }),
       responseSchema: existingTweetPostSchema
-        .and(z.object({ project: projectSchema }))
+        .and(z.object({ retweetOfProject: projectSchema }))
         .array(),
     },
     createReTweet: {
