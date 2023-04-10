@@ -51,14 +51,14 @@ const Users = () => {
 
   const handleDeleteUser = async (id: string) => {
     await promiseToast(
-      service(endpoints.users.delete)({ param: { id } })
-        .then(() => refetchUsers)
-        .catch(handleReqError),
+      service(endpoints.users.delete)({
+        param: { id },
+      }).then(() => refetchUsers),
       {
         loading: "Deleting User....",
         success: "User Deleted",
       },
-    );
+    ).catch(handleReqError);
   };
 
   return (

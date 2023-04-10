@@ -96,10 +96,10 @@ export default function Create({
                   </div>
                   <div>
                     <label className="block text-gray-700 font-bold mb-2">
-                      Url (Tweet Link)
+                      Public Page Url (Optional)
                     </label>
                     <input
-                      type="url"
+                      type="text"
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 border-gray-200"
                       placeholder="url"
                       {...register("url")}

@@ -30,6 +30,16 @@ export class ProjectController {
     );
   }
 
+  @Permissions("MANAGE_PROJECT")
+  @InferMethod(endpoints.projects.getProjectByUrl)
+  getProjectByUrl(@Context() context: IContext) {
+    return createAsyncController(
+      endpoints.projects.getProjectByUrl,
+      context,
+      this.projectService.getProjectByUrl,
+    );
+  }
+
   @Permissions("CREATE_PROJECT")
   @InferMethod(endpoints.projects.create)
   create(@Context() context: IContext) {
