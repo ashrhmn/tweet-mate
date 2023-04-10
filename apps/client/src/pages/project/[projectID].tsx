@@ -123,12 +123,14 @@ export default function ProjectDetails() {
                     </dt>
                     <dd className="mt-1 text-sm leading-5 text-gray-900">
                       <a
-                        href={window.location.origin + "/" + project?.url}
+                        href={
+                          window.location.origin + "/projecturl/" + project.url
+                        }
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline"
                       >
-                        {window.location.origin + "/" + project?.url}
+                        {window.location.origin + "/projecturl/" + project.url}
                       </a>
                     </dd>
                   </div>
