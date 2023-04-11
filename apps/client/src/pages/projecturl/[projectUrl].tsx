@@ -1,6 +1,6 @@
-import LikeOfTweetPostList from "@/components/existingTweetPosts/likeOfTweetPostList";
-import ReTweetPostList from "@/components/existingTweetPosts/reTweetPostList";
-import NewTweetPostList from "@/components/newTweetPosts/newTweetPostList";
+import PublicLikeOfTweetPostList from "@/components/existingTweetPosts/publicLikeOfTweetPostList";
+import PublicReTweetPostList from "@/components/existingTweetPosts/publicReTweetPostList";
+import PublicNewTweetPostList from "@/components/newTweetPosts/publicNewTweetPostList";
 import service from "@/service";
 import { useQuery } from "@tanstack/react-query";
 import { endpoints } from "api-interface";
@@ -47,13 +47,16 @@ export default function ProjectDetails() {
 
       <div>
         <div className="flex flex-wrap justify-center">
-          <NewTweetPostList projectId={projectByUrl.id} />
-          <ReTweetPostList
+          <PublicNewTweetPostList
+            newTweetPostList={projectByUrl.newTweetPosts}
+            projectId={projectByUrl.id}
+          />
+          <PublicReTweetPostList
             reTweetPostList={projectByUrl.retweetPosts}
             projectId={projectByUrl.id}
             refetchProject={refetchProject}
           />
-          <LikeOfTweetPostList
+          <PublicLikeOfTweetPostList
             likeOfTweetPostList={projectByUrl.likeTweets}
             projectId={projectByUrl.id}
             refetchProject={refetchProject}
