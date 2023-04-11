@@ -1,7 +1,6 @@
 import service from "@/service";
-import { useQuery } from "@tanstack/react-query";
 import { endpoints } from "api-interface";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { TwitterShareButton } from "react-twitter-embed";
 
 const getNewTweetPostsByProjectId = (projectId: string) =>
@@ -21,27 +20,27 @@ export default function PublicNewTweetPostList({
 }) {
   const [query, setQuery] = useState("");
 
-  const {
-    data: getNewTweetPosts,
-    status: getNewTweetPostsStatus,
-    refetch: refetchNewTweetPosts,
-  } = useQuery({
-    queryKey: ["getNewTweetPosts"],
-    queryFn: () => getNewTweetPostsByProjectId(projectId!),
-    enabled: !!projectId,
-  });
+  // const {
+  //   data: getNewTweetPosts,
+  //   status: getNewTweetPostsStatus,
+  //   refetch: refetchNewTweetPosts,
+  // } = useQuery({
+  //   queryKey: ["getNewTweetPosts"],
+  //   queryFn: () => getNewTweetPostsByProjectId(projectId!),
+  //   enabled: !!projectId,
+  // });
 
-  const filteredNewTweetPosts = useMemo(() => {
-    if (!getNewTweetPosts) return [];
-    if (!query) return getNewTweetPosts;
-    return getNewTweetPosts.filter((newTweetPost) =>
-      newTweetPost.id.toLowerCase().includes(query),
-    );
-  }, [getNewTweetPosts, query]);
+  // const filteredNewTweetPosts = useMemo(() => {
+  //   if (!getNewTweetPosts) return [];
+  //   if (!query) return getNewTweetPosts;
+  //   return getNewTweetPosts.filter((newTweetPost) =>
+  //     newTweetPost.id.toLowerCase().includes(query),
+  //   );
+  // }, [getNewTweetPosts, query]);
 
-  if (getNewTweetPostsStatus === "loading") return <div>Loading...</div>;
-  if (getNewTweetPostsStatus === "error")
-    return <div>New Tweet Posts not found</div>;
+  // if (getNewTweetPostsStatus === "loading") return <div>Loading...</div>;
+  // if (getNewTweetPostsStatus === "error")
+  //   return <div>New Tweet Posts not found</div>;
 
   return (
     <div className="w-full sm:w-1/3 p-4">
@@ -51,7 +50,7 @@ export default function PublicNewTweetPostList({
       <div className="h-screen overflow-y-auto">
         <table className="w-full table-auto bg-purple-950 rounded-b shadow-lg border-collapse border-neutral-700 border">
           <tbody className="overflow-y-auto border-neutral-700">
-            {getNewTweetPosts.map((tweet) => (
+            {newTweetPostList.map((tweet) => (
               <tr key={tweet.id} className="border-b-4 border-neutral-600 ">
                 <td className="py-2 px-5 text-white font-medium">
                   <div>
