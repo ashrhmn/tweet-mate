@@ -7,7 +7,9 @@ import {
 } from "@nestjs/common";
 import { IEndpoint } from "api-interface";
 import { Request } from "express";
+import { CONFIG } from "src/config/app.config";
 import { IContextRequest } from "src/interfaces";
+import { Client } from "twitter-api-sdk";
 
 export const Input = createParamDecorator<IEndpoint<any, any, any, any>>(
   ({ bodySchema, paramSchema, querySchema }, context: ExecutionContext) => {
@@ -33,5 +35,10 @@ export const Context = createParamDecorator((_, context: ExecutionContext) => {
   const req: IContextRequest = context.switchToHttp().getRequest();
   const res: Response = context.switchToHttp().getResponse();
   const user = req.user;
-  return { req, res, user };
+  const twitterAccesToken =
+    req.cookies[CONFIG.PUBLIC_SECRET.TWITTER_ACCESS_TOKEN_COOKIE_KEY];
+  const twitterClientSdk = !!twitterAccesToken
+    ? new Client(twitterAccesToken)
+    : null;
+  return { req, res, user, twitterClientSdk };
 });

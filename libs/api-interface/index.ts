@@ -92,23 +92,21 @@ export const endpoints = {
       }),
       responseSchema: z.string(),
     },
-    // signup: {
-    //   ...defaultConfig,
-    //   pattern: "auth/signup",
-    //   method: "POST",
-    //   bodySchema: z.object({
-    //     username: z.string(),
-    //     password: z.string(),
-    //     confirmPassword: z.string(),
-    //   }),
-    //   responseSchema: z.string(),
-    // },
     currentUser: {
       ...defaultConfig,
       pattern: "auth/current-user",
       responseSchema: z.object({
         username: z.string(),
         permissions: z.nativeEnum(PERMISSIONS).array(),
+      }),
+    },
+    currentTwitterUser: {
+      ...defaultConfig,
+      pattern: "auth/current-twitter-user",
+      responseSchema: z.object({
+        id: z.string(),
+        username: z.string(),
+        name: z.string(),
       }),
     },
     logout: {
@@ -275,6 +273,13 @@ export const endpoints = {
       pattern: "newTweet/post/:id",
       method: "DELETE",
       paramSchema: z.object({ id: z.string() }),
+      responseSchema: z.string(),
+    },
+    createTweetPostByMember: {
+      ...defaultConfig,
+      pattern: "newTweet/create-member-tweet-post",
+      method: "POST",
+      bodySchema: z.object({ newTweetPostId: z.string() }),
       responseSchema: z.string(),
     },
   },

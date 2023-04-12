@@ -12,4 +12,15 @@ export const CONFIG = {
     },
   },
   NODE_ENV: process.env.NODE_ENV || "development",
+  ENV: {
+    PRODUCTION: process.env.NODE_ENV === "production",
+  },
+  TWITTER_SDK: {
+    STATE: process.env.TWKTTER_SDK_STATE || "twitter-sdk-state",
+  },
+  PUBLIC_SECRET: {
+    TWITTER_ACCESS_TOKEN_COOKIE_KEY:
+      process.env.TWITTER_ACCESS_TOKEN_COOKIE_KEY ||
+      "8giEFUX6E%@8b)(5eEyTh]z{>[)7-{P3d",
+  },
 };

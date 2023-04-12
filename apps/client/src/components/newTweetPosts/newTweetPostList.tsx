@@ -1,8 +1,10 @@
+import useCurrentTwitterUser from "@/hooks/useCurrentTwitterUser";
 import service from "@/service";
+import { handleReqError } from "@/utils/error.utils";
+import { promiseToast } from "@/utils/toast.utils";
 import { useQuery } from "@tanstack/react-query";
 import { endpoints } from "api-interface";
 import { useMemo, useState } from "react";
-import { TwitterShareButton } from "react-twitter-embed";
 import Create from "./createNewTweetPostForm";
 
 const getNewTweetPostsByProjectId = (projectId: string) =>
@@ -15,6 +17,8 @@ export default function NewTweetPostList({ projectId }: { projectId: string }) {
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  const currentTwitterUser = useCurrentTwitterUser();
 
   const {
     data: getNewTweetPosts,
@@ -77,14 +81,42 @@ export default function NewTweetPostList({ projectId }: { projectId: string }) {
                       />
                     </div>
                     <div className="flex justify-end mt-2">
-                      <TwitterShareButton
+                      {/* <TwitterShareButton
                         url=""
                         options={{
                           size: "large",
                           text: tweet.content,
                           via: "",
                         }}
-                      />
+                      /> */}
+                      {!!currentTwitterUser.data ? (
+                        <button
+                          onClick={() => {
+                            console.log(tweet);
+                            promiseToast(
+                              service(
+                                endpoints.newTweetPosts.createTweetPostByMember,
+                              )({ body: { newTweetPostId: tweet.id } }),
+                              { loading: "Posting...", success: "Posted" },
+                            ).catch(handleReqError);
+                          }}
+                          className="bg-blue-500 rounded-2xl w-40 flex gap-2 justify-center items-end p-1"
+                        >
+                          Post
+                          <span className="text-xs">
+                            as
+                            {" " + currentTwitterUser.data.name ||
+                              currentTwitterUser.data.username}
+                          </span>
+                        </button>
+                      ) : (
+                        <a
+                          href="/api/auth/twitter"
+                          className="bg-blue-500 rounded-2xl w-40 flex gap-2 justify-center items-end p-1"
+                        >
+                          Login with Twitter
+                        </a>
+                      )}
                     </div>
                   </div>
                 </td>

@@ -7,6 +7,7 @@ import { ExistingTweetPostModule } from "./modules/existingTweetPost/existingTwe
 import { NewTweetPostModule } from "./modules/newTweetPost/newTweetPost.module";
 import { PrismaModule } from "./modules/prisma/prisma.module";
 import { ProjectModule } from "./modules/project/project.module";
+import { TwitterSdkModule } from "./modules/twitter-sdk/twitter-sdk.module";
 import { UserModule } from "./modules/user/user.module";
 
 @Module({
@@ -17,6 +18,7 @@ import { UserModule } from "./modules/user/user.module";
     UserModule,
     NewTweetPostModule,
     ExistingTweetPostModule,
+    TwitterSdkModule,
   ],
   controllers: [],
   providers: [{ provide: APP_GUARD, useClass: PermissionsGuard }],
