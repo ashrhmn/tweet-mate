@@ -33,11 +33,11 @@ export class AuthMiddleware implements NestMiddleware {
       res.cookie("authorization", access_token, {
         httpOnly: true,
         expires: new Date(Date.now() + CONFIG.JWT.TIMEOUT.ACCESS * 1000),
-        secure: CONFIG.NODE_ENV === "production",
+        secure: CONFIG.ENV.PRODUCTION,
       });
       res.cookie("refresh_token", new_refresh_token, {
         httpOnly: true,
-        secure: CONFIG.NODE_ENV === "production",
+        secure: CONFIG.ENV.PRODUCTION,
       });
       req.user = { ...payload, permissions: user.permissions, iat: 0, exp: 0 };
       return next();

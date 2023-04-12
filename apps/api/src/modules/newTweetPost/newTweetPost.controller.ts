@@ -39,4 +39,13 @@ export class NewTweetPostController {
       this.newTweetPostService.delete,
     );
   }
+
+  @InferMethod(endpoints.newTweetPosts.createTweetPostByMember)
+  createTweetPostByMember(@Context() contex: IContext) {
+    return createAsyncController(
+      endpoints.newTweetPosts.createTweetPostByMember,
+      contex,
+      this.newTweetPostService.createTweetPostByMember,
+    );
+  }
 }

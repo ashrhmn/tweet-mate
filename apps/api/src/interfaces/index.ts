@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import { Request, Response } from "express";
+import { Client } from "twitter-api-sdk";
 
 export type AuthUser = Omit<User, "password"> & { iat: number; exp: number };
 export type IContextRequest = Request & {
@@ -11,4 +12,5 @@ export type IContext = {
   req: IContextRequest;
   res: Response;
   user?: AuthUser;
+  twitterClientSdk?: Client;
 };

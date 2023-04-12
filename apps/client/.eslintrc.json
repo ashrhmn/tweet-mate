@@ -9,6 +9,7 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
-    "eqeqeq": "warn"
+    "eqeqeq": "warn",
+    "@next/next/no-img-element": "off"
   }
 }

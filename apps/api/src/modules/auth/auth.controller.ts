@@ -1,5 +1,7 @@
-import { Controller } from "@nestjs/common";
+import { BadRequestException, Controller, Get, Inject } from "@nestjs/common";
 import { endpoints } from "api-interface";
+import { CONFIG } from "src/config/app.config";
+import { TWITTER_SDK_PROVIDER, TwitterClient } from "src/constants";
 import { Context, InferMethod } from "src/decorators";
 import { IContext } from "src/interfaces";
 import {
@@ -10,7 +12,10 @@ import { AuthService } from "./auth.service";
 
 @Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    @Inject(TWITTER_SDK_PROVIDER) private readonly twitterSdk: TwitterClient,
+  ) {}
 
   @InferMethod(endpoints.auth.login)
   login(@Context() context: IContext) {
@@ -20,15 +25,6 @@ export class AuthController {
       this.authService.login,
     );
   }
-
-  // @InferMethod(endpoints.auth.signup)
-  // signup(@Context() context: IContext) {
-  //   return createAsyncController(
-  //     endpoints.auth.signup,
-  //     context,
-  //     this.authService.signup,
-  //   );
-  // }
 
   @InferMethod(endpoints.auth.currentUser)
   currentUser(@Context() context: IContext) {
@@ -46,5 +42,49 @@ export class AuthController {
       context,
       this.authService.logout,
     );
+  }
+
+  @InferMethod(endpoints.auth.currentTwitterUser)
+  currentTwitterUser(@Context() context: IContext) {
+    return createAsyncController(
+      endpoints.auth.currentTwitterUser,
+      context,
+      this.authService.currentTwitterUser,
+    );
+  }
+
+  @Get("/auth/twitter")
+  loginWithTwitter(@Context() context: IContext) {
+    const url = this.twitterSdk.authClient.generateAuthURL({
+      state: CONFIG.TWITTER_SDK.STATE,
+      code_challenge: "s256",
+    });
+    return context.res.redirect(url);
+  }
+
+  @Get("/auth/twitter-callback")
+  async twitterCallBack(@Context() context: IContext): Promise<any> {
+    try {
+      const { query } = context.req;
+      console.log({ query });
+      const { token } = await this.twitterSdk.authClient.requestAccessToken(
+        query?.code as string,
+      );
+      if (!token || !token.access_token || !token.expires_at)
+        throw new BadRequestException();
+      context.res.cookie(
+        CONFIG.PUBLIC_SECRET.TWITTER_ACCESS_TOKEN_COOKIE_KEY,
+        token.access_token,
+        {
+          httpOnly: true,
+          expires: new Date(token.expires_at),
+          secure: CONFIG.ENV.PRODUCTION,
+        },
+      );
+      return context.res.redirect("/");
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException();
+    }
   }
 }

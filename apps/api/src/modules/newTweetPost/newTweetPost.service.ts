@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -56,4 +57,23 @@ export class NewTweetPostService {
       return "deleted";
     },
   );
+
+  createTweetPostByMember = createAsyncService<
+    typeof endpoints.newTweetPosts.createTweetPostByMember
+  >(async ({ body: { newTweetPostId } }, { twitterClientSdk }) => {
+    if (!twitterClientSdk)
+      throw new UnauthorizedException("Please login with twitter first");
+    const newTweetPost = await this.prisma.newTweetPost.findFirst({
+      where: { id: newTweetPostId },
+    });
+    if (!newTweetPost) throw new NotFoundException();
+    if (!newTweetPost.content)
+      throw new BadRequestException("Content is empty");
+
+    const post = await twitterClientSdk.tweets.createTweet({
+      text: newTweetPost.content,
+    });
+    if (post.errors) throw new BadRequestException(post.errors);
+    return "success";
+  });
 }
