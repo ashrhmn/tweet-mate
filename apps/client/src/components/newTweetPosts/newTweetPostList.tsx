@@ -4,14 +4,13 @@ import { handleReqError } from "@/utils/error.utils";
 import { promiseToast } from "@/utils/toast.utils";
 import { useQuery } from "@tanstack/react-query";
 import { endpoints } from "api-interface";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Create from "./createNewTweetPostForm";
 
 const getNewTweetPostsByProjectId = (projectId: string) =>
   service(endpoints.newTweetPosts.getAllByProjectId)({ param: { projectId } });
 
 export default function NewTweetPostList({ projectId }: { projectId: string }) {
-  const [query, setQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleSidebarToggle = () => {
@@ -29,14 +28,6 @@ export default function NewTweetPostList({ projectId }: { projectId: string }) {
     queryFn: () => getNewTweetPostsByProjectId(projectId!),
     enabled: !!projectId,
   });
-
-  const filteredNewTweetPosts = useMemo(() => {
-    if (!getNewTweetPosts) return [];
-    if (!query) return getNewTweetPosts;
-    return getNewTweetPosts.filter((newTweetPost) =>
-      newTweetPost.id.toLowerCase().includes(query),
-    );
-  }, [getNewTweetPosts, query]);
 
   if (getNewTweetPostsStatus === "loading") return <div>Loading...</div>;
   if (getNewTweetPostsStatus === "error")

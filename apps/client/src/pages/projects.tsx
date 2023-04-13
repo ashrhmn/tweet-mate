@@ -9,23 +9,22 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 const Projects = () => {
-  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  // const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [userID, setUserID] = useState("");
   const [query, setQuery] = useState("");
 
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleEditClick = (id: string) => {
-    setIsEditFormOpen(true);
-    setUserID(id);
-  };
+  // const handleEditClick = (id: string) => {
+  //   setIsEditFormOpen(true);
+  //   setUserID(id);
+  // };
 
-  const handleFormClose = () => {
-    setIsEditFormOpen(false);
-  };
+  // const handleFormClose = () => {
+  //   setIsEditFormOpen(false);
+  // };
 
   const {
     data: getProjects,
@@ -164,10 +163,7 @@ const Projects = () => {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-xs font-semibold border whitespace-nowrap">
-                      <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                        onClick={() => handleEditClick(project.id)}
-                      >
+                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Edit
                       </button>
                       <button

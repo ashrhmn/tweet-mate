@@ -17,56 +17,44 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   if (currentUserStatus === "loading") return <FullScreenSpinner />;
   return (
     <>
-      {/* <nav className="text-xl flex w-full justify-end items-center gap-4 p-4">
-        {!!user && (
-          <>
-            <Link href={`/`}>Dashboard</Link>
-            {hasPermissions("MANAGE_PROJECT") && (
-              <Link href={`/projects`}>Projects</Link>
-            )}
-            {hasPermissions("READ_USER") && <Link href={`/users`}>Users</Link>}
-          </>
-        )}
-        {(!user || currentUserStatus === "error") && (
-          <Link href={`/login`}>Login</Link>
-        )}
-      </nav> */}
       <header className="bg-gradient-to-r from-indigo-500 to-purple-500 shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            {!!user && (
-              <div className="flex items-center">
-                <Link href="/" className="flex-shrink-0">
-                  <img className="h-8 w-auto" src="/logo.svg" alt="Logo" />
-                </Link>
-                <div className="hidden ml-6 sm:flex sm:space-x-8">
-                  <Link
-                    href={`/`}
-                    className="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Dashboard
-                  </Link>
-
-                  {hasPermissions("MANAGE_PROJECT") && (
+            <div className="flex items-center">
+              <Link href="/" className="flex-shrink-0">
+                <img className="h-8 w-auto" alt="Logo" />
+              </Link>
+              <div className="hidden ml-6 sm:flex sm:space-x-8">
+                {!!user && (
+                  <>
                     <Link
-                      href={`/projects`}
+                      href={`/`}
                       className="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium"
                     >
-                      Projects
+                      Dashboard
                     </Link>
-                  )}
 
-                  {hasPermissions("READ_USER") && (
-                    <Link
-                      href={`/users`}
-                      className="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium"
-                    >
-                      Users
-                    </Link>
-                  )}
-                </div>
+                    {hasPermissions("MANAGE_PROJECT") && (
+                      <Link
+                        href={`/projects`}
+                        className="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium"
+                      >
+                        Projects
+                      </Link>
+                    )}
+
+                    {hasPermissions("READ_USER") && (
+                      <Link
+                        href={`/users`}
+                        className="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium"
+                      >
+                        Users
+                      </Link>
+                    )}
+                  </>
+                )}
               </div>
-            )}
+            </div>
 
             <div className="flex items-center">
               {(!user || currentUserStatus === "error") && (
@@ -88,9 +76,9 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
                         d="M4 6h16M4 12h16M4 18h16"
                       ></path>
                     </svg>
@@ -136,11 +124,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
                         aria-haspopup="true"
                       >
                         <span className="sr-only">Open user menu</span>
-                        <img
-                          className="h-8 w-8 rounded-full"
-                          src="/profile.jpg"
-                          alt="Profile"
-                        />
+                        <img className="h-8 w-8 rounded-full" alt="Profile" />
                       </button>
                     </div>
                     {/* <div

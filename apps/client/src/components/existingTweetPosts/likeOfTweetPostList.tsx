@@ -16,9 +16,7 @@ export default function LikeOfTweetPostList({
   projectId: string;
   refetchProject: () => void;
 }) {
-  const [query, setQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [tweetFound, setTweetFound] = useState(true);
 
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);

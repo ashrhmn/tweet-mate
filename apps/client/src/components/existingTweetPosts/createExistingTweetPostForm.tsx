@@ -9,12 +9,7 @@ import { z } from "zod";
 const createReTweetSchema =
   endpoints.existingTweetPosts.createReTweet.bodySchema;
 
-type ICreateReTweetData = z.infer<typeof createReTweetSchema>;
-
-const createLikeOfTweetSchema =
-  endpoints.existingTweetPosts.createLikeOfTweet.bodySchema;
-
-type ICreateLikeOfTweetData = z.infer<typeof createLikeOfTweetSchema>;
+type ICreateReTweetData = z.infer<typeof createReTweetSchema>; //sametype for ICreateLikeOfTweetData
 
 export default function Create({
   isOpen,

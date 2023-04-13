@@ -1,10 +1,8 @@
-import { useRouter } from "next/router";
 import { useState } from "react";
 
 function Page() {
   const [text, setText] = useState("");
 
-  const { asPath } = useRouter();
   const origin =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin

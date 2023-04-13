@@ -27,11 +27,6 @@ export default function ProjectDetails() {
   if (getProjectStatus === "loading") return <div>Loading...</div>;
   if (getProjectStatus === "error") return <div>Project not found</div>;
 
-  const origin =
-    typeof window !== "undefined" && window.location.origin
-      ? window.location.origin
-      : "";
-
   //console.log(project.retweetPosts);
 
   return (
