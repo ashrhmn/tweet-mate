@@ -1,10 +1,7 @@
-import { useState } from "react";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 
 export default function PublicLikeOfTweetPostList({
   likeOfTweetPostList,
-  projectId,
-  refetchProject,
 }: {
   likeOfTweetPostList: {
     id: string;
@@ -12,12 +9,7 @@ export default function PublicLikeOfTweetPostList({
     retweetOfProjectId: string | null;
     likeOfProjectId: string | null;
   }[];
-  projectId: string;
-  refetchProject: () => void;
 }) {
-  const [query, setQuery] = useState("");
-  const [tweetFound, setTweetFound] = useState(true);
-
   return (
     <div className="w-full sm:w-1/3 p-4">
       <div className="bg-green-700 mt-1 py-2 text-white font-medium rounded-t text-center">

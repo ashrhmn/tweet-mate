@@ -49,17 +49,10 @@ export default function ProjectDetails() {
         <div className="flex flex-wrap justify-center">
           <PublicNewTweetPostList
             newTweetPostList={projectByUrl.newTweetPosts}
-            projectId={projectByUrl.id}
           />
-          <PublicReTweetPostList
-            reTweetPostList={projectByUrl.retweetPosts}
-            projectId={projectByUrl.id}
-            refetchProject={refetchProject}
-          />
+          <PublicReTweetPostList reTweetPostList={projectByUrl.retweetPosts} />
           <PublicLikeOfTweetPostList
             likeOfTweetPostList={projectByUrl.likeTweets}
-            projectId={projectByUrl.id}
-            refetchProject={refetchProject}
           />
         </div>
       </div>

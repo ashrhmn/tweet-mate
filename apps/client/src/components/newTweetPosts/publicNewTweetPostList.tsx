@@ -1,14 +1,7 @@
-import service from "@/service";
-import { endpoints } from "api-interface";
-import { useState } from "react";
 import { TwitterShareButton } from "react-twitter-embed";
-
-const getNewTweetPostsByProjectId = (projectId: string) =>
-  service(endpoints.newTweetPosts.getAllByProjectId)({ param: { projectId } });
 
 export default function PublicNewTweetPostList({
   newTweetPostList,
-  projectId,
 }: {
   newTweetPostList: {
     id: string;
@@ -16,10 +9,7 @@ export default function PublicNewTweetPostList({
     content: string | null;
     media: string[];
   }[];
-  projectId: string;
 }) {
-  const [query, setQuery] = useState("");
-
   // const {
   //   data: getNewTweetPosts,
   //   status: getNewTweetPostsStatus,
