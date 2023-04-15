@@ -83,4 +83,17 @@ export class AuthService {
     }
     return currentUser.data;
   });
+
+  currentDiscordUser = createAsyncService<
+    typeof endpoints.auth.currentDiscordUser
+  >(async (_, { discordClient }) => {
+    if (!discordClient) throw new UnauthorizedException();
+    const currentUser = await discordClient;
+    console.log(currentUser);
+    if (!currentUser) {
+      console.error("Error in finding current twitter user");
+      throw new UnauthorizedException();
+    }
+    return currentUser;
+  });
 }

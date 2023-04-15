@@ -22,5 +22,9 @@ export const CONFIG = {
     TWITTER_ACCESS_TOKEN_COOKIE_KEY:
       process.env.TWITTER_ACCESS_TOKEN_COOKIE_KEY ||
       "8giEFUX6E%@8b)(5eEyTh]z{>[)7-{P3d",
+
+    DISCORD_ACCESS_TOKEN_COOKIE_KEY:
+      process.env.DISCORD_ACCESS_TOKEN_COOKIE_KEY ||
+      "6txYISC8F%@4L)(4eRzUi]z{>[)9-{t4g",
   },
 };
