@@ -1,5 +1,7 @@
 import { BadRequestException, Controller, Get, Inject } from "@nestjs/common";
 import { endpoints } from "api-interface";
+import { randomBytes } from "crypto";
+import * as DiscordOauth2 from "discord-oauth2";
 import { CONFIG } from "src/config/app.config";
 import { TWITTER_SDK_PROVIDER, TwitterClient } from "src/constants";
 import { Context, InferMethod } from "src/decorators";
@@ -90,8 +92,8 @@ export class AuthController {
 
   @Get("/auth/discord")
   async loginWithDiscord(@Context() context: IContext) {
-    const crypto = require("crypto");
-    const DiscordOauth2 = require("discord-oauth2");
+    // const crypto = require("crypto");
+    // const DiscordOauth2 = require("discord-oauth2");
     const oauth = new DiscordOauth2({
       clientId: "1096356030771908679",
       clientSecret: "6fHt4LxdkBPhj3GH-T8pnCcHmO33fdmj",
@@ -100,7 +102,7 @@ export class AuthController {
 
     const url = oauth.generateAuthUrl({
       scope: ["identify", "guilds"],
-      state: crypto.randomBytes(16).toString("hex"), // Be aware that randomBytes is sync if no callback is provided
+      state: randomBytes(16).toString("hex"), // Be aware that randomBytes is sync if no callback is provided
     });
 
     console.log(url);
@@ -111,13 +113,13 @@ export class AuthController {
   async discordCallBack(@Context() context: IContext): Promise<any> {
     try {
       const { query } = context.req;
-      const DiscordOauth2 = require("discord-oauth2");
+      // const DiscordOauth2 = require("discord-oauth2");
       const oauth = new DiscordOauth2();
       const token = await oauth.tokenRequest({
         clientId: "1096356030771908679",
         clientSecret: "6fHt4LxdkBPhj3GH-T8pnCcHmO33fdmj",
 
-        code: query.code,
+        code: query.code as string,
         scope: "identify guilds",
         grantType: "authorization_code",
 
