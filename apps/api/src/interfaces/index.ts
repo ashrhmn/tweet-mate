@@ -7,7 +7,7 @@ export type IContextRequest = Request & {
   user?: AuthUser;
   tokens?: { authorization: string; refresh_token: string };
 };
-export type discordClient = {
+export type IDiscordUser = {
   username: string;
   locale: string;
   mfa_enabled: boolean;
@@ -22,5 +22,5 @@ export type IContext = {
   res: Response;
   user?: AuthUser;
   twitterClientSdk?: Client;
-  discordClient?: discordClient;
+  discordUser?: IDiscordUser;
 };
