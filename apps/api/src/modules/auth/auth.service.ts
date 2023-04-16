@@ -94,7 +94,7 @@ export class AuthService {
     });
     if (existingUser) return false;
 
-    const newUser = await this.prisma.memberUser.create({
+    await this.prisma.memberUser.create({
       data: {
         discordUsername: discordUser.username,
         discordDiscriminator: Number(discordUser.discriminator),
