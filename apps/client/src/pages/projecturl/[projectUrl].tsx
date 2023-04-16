@@ -17,7 +17,7 @@ export default function ProjectDetails() {
   const {
     data: projectByUrl,
     status: getProjectByUrlStatus,
-    refetch: refetchProject,
+    // refetch: refetchProject,
   } = useQuery({
     queryKey: ["getProjectByUrl"],
     queryFn: () => getProjectByUrl(projectUrl!),

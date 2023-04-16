@@ -14,7 +14,6 @@ import service from "@/service";
 import { handleReqError } from "@/utils/error.utils";
 import { promiseToast } from "@/utils/toast.utils";
 import { endpoints } from "api-interface";
-import { useRouter } from "next/router";
 
 export default function LoginMemberUser() {
   const { data: currentDiscordUser, refetch: refetchCurrentDiscordUser } =
@@ -24,7 +23,7 @@ export default function LoginMemberUser() {
     username: "EvaaanSarrwe",
   };
 
-  let router = useRouter();
+  // let router = useRouter();
   if (currentDiscordUser && currentTwitterUser) {
     //router.push("/");
   }

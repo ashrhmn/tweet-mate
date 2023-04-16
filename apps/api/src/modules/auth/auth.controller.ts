@@ -137,9 +137,7 @@ export class AuthController {
         },
       );
       const discordUser = await new DiscordOauth2().getUser(token.access_token);
-      const newUser: boolean = await this.authService.insertDiscordUser(
-        discordUser,
-      );
+      await this.authService.insertDiscordUser(discordUser);
 
       return context.res.redirect("http://localhost:3000/memberUser-login");
     } catch (err) {
