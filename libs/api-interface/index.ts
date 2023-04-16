@@ -122,6 +122,11 @@ export const endpoints = {
         id: z.string(),
       }),
     },
+    revokeDiscordUser: {
+      ...defaultConfig,
+      pattern: "auth/revoke-discord-user",
+      responseSchema: z.string(),
+    },
     logout: {
       ...defaultConfig,
       pattern: "auth/logout",

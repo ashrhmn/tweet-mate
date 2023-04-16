@@ -44,8 +44,6 @@ export const Context = createParamDecorator(
       : null;
     const discordAccesToken =
       req.cookies[CONFIG.PUBLIC_SECRET.DISCORD_ACCESS_TOKEN_COOKIE_KEY];
-    // const discordAccesToken = "fH5vi44cjmZCckDGMSULKGpbP7GEvt";
-    console.log({ discordAccesToken });
     const discordUser = !!discordAccesToken
       ? await new DiscordOauth2().getUser(discordAccesToken)
       : null;

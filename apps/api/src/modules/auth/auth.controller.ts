@@ -92,12 +92,10 @@ export class AuthController {
 
   @Get("/auth/discord")
   async loginWithDiscord(@Context() context: IContext) {
-    // const crypto = require("crypto");
-    // const DiscordOauth2 = require("discord-oauth2");
     const oauth = new DiscordOauth2({
       clientId: "1096356030771908679",
       clientSecret: "6fHt4LxdkBPhj3GH-T8pnCcHmO33fdmj",
-      redirectUri: "http://localhost:4000/api/auth/discord-callback",
+      redirectUri: "http://localhost:3000/api/auth/discord-callback",
     });
 
     const url = oauth.generateAuthUrl({
@@ -114,8 +112,7 @@ export class AuthController {
     try {
       const { query } = context.req;
       // const DiscordOauth2 = require("discord-oauth2");
-      const oauth = new DiscordOauth2();
-      const token = await oauth.tokenRequest({
+      const token = await new DiscordOauth2().tokenRequest({
         clientId: "1096356030771908679",
         clientSecret: "6fHt4LxdkBPhj3GH-T8pnCcHmO33fdmj",
 
@@ -123,7 +120,7 @@ export class AuthController {
         scope: "identify guilds",
         grantType: "authorization_code",
 
-        redirectUri: "http://localhost:4000/api/auth/discord-callback",
+        redirectUri: "http://localhost:3000/api/auth/discord-callback",
       });
 
       console.log(token);
@@ -139,7 +136,12 @@ export class AuthController {
           secure: CONFIG.ENV.PRODUCTION,
         },
       );
-      return context.res.redirect("http://localhost:3000");
+      const discordUser = await new DiscordOauth2().getUser(token.access_token);
+      const newUser: boolean = await this.authService.insertDiscordUser(
+        discordUser,
+      );
+
+      return context.res.redirect("http://localhost:3000/memberUser-login");
     } catch (err) {
       console.log(err);
       throw new BadRequestException();
@@ -152,6 +154,15 @@ export class AuthController {
       endpoints.auth.currentDiscordUser,
       context,
       this.authService.currentDiscordUser,
+    );
+  }
+
+  @InferMethod(endpoints.auth.revokeDiscordUser)
+  revokeDiscordUser(@Context() context: IContext) {
+    return createAsyncController(
+      endpoints.auth.revokeDiscordUser,
+      context,
+      this.authService.revokeDiscordUser,
     );
   }
 }
