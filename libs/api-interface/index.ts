@@ -109,6 +109,24 @@ export const endpoints = {
         name: z.string(),
       }),
     },
+    currentDiscordUser: {
+      ...defaultConfig,
+      pattern: "auth/current-discord-user",
+      responseSchema: z.object({
+        username: z.string(),
+        locale: z.string(),
+        mfa_enabled: z.boolean(),
+        flags: z.number(),
+        avatar: z.string(),
+        discriminator: z.string(),
+        id: z.string(),
+      }),
+    },
+    revokeDiscordUser: {
+      ...defaultConfig,
+      pattern: "auth/revoke-discord-user",
+      responseSchema: z.string(),
+    },
     logout: {
       ...defaultConfig,
       pattern: "auth/logout",

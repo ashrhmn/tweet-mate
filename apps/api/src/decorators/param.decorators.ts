@@ -6,6 +6,7 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { IEndpoint } from "api-interface";
+import * as DiscordOauth2 from "discord-oauth2";
 import { Request } from "express";
 import { CONFIG } from "src/config/app.config";
 import { IContextRequest } from "src/interfaces";
@@ -31,14 +32,21 @@ export const Input = createParamDecorator<IEndpoint<any, any, any, any>>(
   },
 );
 
-export const Context = createParamDecorator((_, context: ExecutionContext) => {
-  const req: IContextRequest = context.switchToHttp().getRequest();
-  const res: Response = context.switchToHttp().getResponse();
-  const user = req.user;
-  const twitterAccesToken =
-    req.cookies[CONFIG.PUBLIC_SECRET.TWITTER_ACCESS_TOKEN_COOKIE_KEY];
-  const twitterClientSdk = !!twitterAccesToken
-    ? new Client(twitterAccesToken)
-    : null;
-  return { req, res, user, twitterClientSdk };
-});
+export const Context = createParamDecorator(
+  async (_, context: ExecutionContext) => {
+    const req: IContextRequest = context.switchToHttp().getRequest();
+    const res: Response = context.switchToHttp().getResponse();
+    const user = req.user;
+    const twitterAccesToken =
+      req.cookies[CONFIG.PUBLIC_SECRET.TWITTER_ACCESS_TOKEN_COOKIE_KEY];
+    const twitterClientSdk = !!twitterAccesToken
+      ? new Client(twitterAccesToken)
+      : null;
+    const discordAccesToken =
+      req.cookies[CONFIG.PUBLIC_SECRET.DISCORD_ACCESS_TOKEN_COOKIE_KEY];
+    const discordUser = !!discordAccesToken
+      ? await new DiscordOauth2().getUser(discordAccesToken)
+      : null;
+    return { req, res, user, twitterClientSdk, discordUser };
+  },
+);

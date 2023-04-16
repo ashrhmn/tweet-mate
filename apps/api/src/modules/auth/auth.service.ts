@@ -6,6 +6,7 @@ import {
 } from "@nestjs/common";
 import { endpoints } from "api-interface";
 import { verify } from "argon2";
+import * as DiscordOauth2 from "discord-oauth2";
 import { CONFIG } from "src/config/app.config";
 import { TWITTER_SDK_PROVIDER, TwitterClient } from "src/constants";
 import { generateTokens } from "src/utils/auth.utils";
@@ -82,5 +83,51 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     return currentUser.data;
+  });
+
+  insertDiscordUser = async (discordUser: any) => {
+    if (!discordUser) throw new BadRequestException("Discord User Not Found");
+    const existingUser = await this.prisma.memberUser.findFirst({
+      where: {
+        discordUsername: discordUser.username,
+      },
+    });
+    if (existingUser) return false;
+
+    const newUser = await this.prisma.memberUser.create({
+      data: {
+        discordUsername: discordUser.username,
+        discordDiscriminator: Number(discordUser.discriminator),
+      },
+    });
+    return true;
+  };
+
+  currentDiscordUser = createAsyncService<
+    typeof endpoints.auth.currentDiscordUser
+  >(async (_, { discordUser }) => {
+    if (!discordUser) throw new UnauthorizedException();
+    return discordUser;
+  });
+
+  revokeDiscordUser = createAsyncService<
+    typeof endpoints.auth.revokeDiscordUser
+  >(async (_, { discordUser, req }) => {
+    if (!discordUser) throw new UnauthorizedException();
+
+    const clientID = "1096356030771908679";
+    const client_secret = "6fHt4LxdkBPhj3GH-T8pnCcHmO33fdmj";
+    const discordAccesToken =
+      req.cookies[CONFIG.PUBLIC_SECRET.DISCORD_ACCESS_TOKEN_COOKIE_KEY];
+
+    // You must encode your client ID along with your client secret including the colon in between
+    const credentials = Buffer.from(`${clientID}:${client_secret}`).toString(
+      "base64",
+    ); // MzMyMjY5OTk5OTEyMTMyMDk3OjkzN2l0M293ODdpNGVyeTY5ODc2d3FpcmU=
+
+    new DiscordOauth2()
+      .revokeToken(discordAccesToken, credentials)
+      .then(console.log);
+    return "revokedDiscordToken";
   });
 }

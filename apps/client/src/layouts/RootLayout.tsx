@@ -162,7 +162,6 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
           </div>
         </div>
       </header>
-      <br />
       <main>{children}</main>
       <Toaster position="bottom-right" />
     </>

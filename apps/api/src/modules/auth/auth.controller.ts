@@ -1,5 +1,7 @@
 import { BadRequestException, Controller, Get, Inject } from "@nestjs/common";
 import { endpoints } from "api-interface";
+import { randomBytes } from "crypto";
+import * as DiscordOauth2 from "discord-oauth2";
 import { CONFIG } from "src/config/app.config";
 import { TWITTER_SDK_PROVIDER, TwitterClient } from "src/constants";
 import { Context, InferMethod } from "src/decorators";
@@ -86,5 +88,81 @@ export class AuthController {
       console.error(error);
       throw new BadRequestException();
     }
+  }
+
+  @Get("/auth/discord")
+  async loginWithDiscord(@Context() context: IContext) {
+    const oauth = new DiscordOauth2({
+      clientId: "1096356030771908679",
+      clientSecret: "6fHt4LxdkBPhj3GH-T8pnCcHmO33fdmj",
+      redirectUri: "http://localhost:3000/api/auth/discord-callback",
+    });
+
+    const url = oauth.generateAuthUrl({
+      scope: ["identify", "guilds"],
+      state: randomBytes(16).toString("hex"), // Be aware that randomBytes is sync if no callback is provided
+    });
+
+    console.log(url);
+    return context.res.redirect(url);
+  }
+
+  @Get("/auth/discord-callback")
+  async discordCallBack(@Context() context: IContext): Promise<any> {
+    try {
+      const { query } = context.req;
+      // const DiscordOauth2 = require("discord-oauth2");
+      const token = await new DiscordOauth2().tokenRequest({
+        clientId: "1096356030771908679",
+        clientSecret: "6fHt4LxdkBPhj3GH-T8pnCcHmO33fdmj",
+
+        code: query.code as string,
+        scope: "identify guilds",
+        grantType: "authorization_code",
+
+        redirectUri: "http://localhost:3000/api/auth/discord-callback",
+      });
+
+      console.log(token);
+
+      if (!token || !token.access_token || !token.expires_in)
+        throw new BadRequestException();
+      context.res.cookie(
+        CONFIG.PUBLIC_SECRET.DISCORD_ACCESS_TOKEN_COOKIE_KEY,
+        token.access_token,
+        {
+          httpOnly: true,
+          expires: new Date(new Date().getTime() + token.expires_in * 1000),
+          secure: CONFIG.ENV.PRODUCTION,
+        },
+      );
+      const discordUser = await new DiscordOauth2().getUser(token.access_token);
+      const newUser: boolean = await this.authService.insertDiscordUser(
+        discordUser,
+      );
+
+      return context.res.redirect("http://localhost:3000/memberUser-login");
+    } catch (err) {
+      console.log(err);
+      throw new BadRequestException();
+    }
+  }
+
+  @InferMethod(endpoints.auth.currentDiscordUser)
+  currentDiscordUser(@Context() context: IContext) {
+    return createAsyncController(
+      endpoints.auth.currentDiscordUser,
+      context,
+      this.authService.currentDiscordUser,
+    );
+  }
+
+  @InferMethod(endpoints.auth.revokeDiscordUser)
+  revokeDiscordUser(@Context() context: IContext) {
+    return createAsyncController(
+      endpoints.auth.revokeDiscordUser,
+      context,
+      this.authService.revokeDiscordUser,
+    );
   }
 }
