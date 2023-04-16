@@ -3,6 +3,7 @@
 // import { CONFIG } from "src/config/app.config";
 
 import { Module } from "@nestjs/common";
+import { DiscordBotController } from "./discord-bot.controller";
 import { DiscordBotService } from "./discord-bot.service";
 
 // // const client = new Client({ intents: ["GuildMessages"] });
@@ -31,5 +32,9 @@ import { DiscordBotService } from "./discord-bot.service";
 //   }
 // }
 
-@Module({ providers: [DiscordBotService], exports: [DiscordBotService] })
+@Module({
+  providers: [DiscordBotService],
+  exports: [DiscordBotService],
+  controllers: [DiscordBotController],
+})
 export class DiscordBotModule {}
