@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
 import { PermissionsGuard } from "./guards/permission.guard";
 import { AuthMiddleware } from "./middlewares/auth.middleware";
+import { DiscordBotModule } from "./modules/DiscordBot/discord-bot.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { ExistingTweetPostModule } from "./modules/existingTweetPost/existingTweetPost.module";
 import { NewTweetPostModule } from "./modules/newTweetPost/newTweetPost.module";
@@ -19,8 +20,8 @@ import { UserModule } from "./modules/user/user.module";
     NewTweetPostModule,
     ExistingTweetPostModule,
     TwitterSdkModule,
+    DiscordBotModule,
   ],
-  controllers: [],
   providers: [{ provide: APP_GUARD, useClass: PermissionsGuard }],
 })
 export class AppModule implements NestModule {
