@@ -17,6 +17,11 @@ export class DiscordBotController {
     return this.discordBotService.getChannelList(guildId);
   }
 
+  @Get("/discord-bot/members/:guildId")
+  getMembers(@Param("guildId") guildId: string) {
+    return this.discordBotService.getMembers(guildId);
+  }
+
   @Post("/discord-bot/send-message/")
   sendMessage(
     @Body() { channelId, content }: { channelId: string; content: string },

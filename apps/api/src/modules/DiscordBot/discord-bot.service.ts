@@ -13,7 +13,7 @@ export class DiscordBotService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor() {
-    super({ intents: [] });
+    super({ intents: ["GuildMembers", "Guilds"] });
   }
   onModuleInit() {
     this.login(CONFIG.DISCORD_BOT.SECRET);
@@ -50,6 +50,18 @@ export class DiscordBotService
       id: channel.id,
       name: channel.name,
       type: channel.type,
+    }));
+  }
+
+  async getMembers(guildId: string) {
+    const guild = await this.guilds.fetch(guildId);
+    if (!guild) throw new Error("Guild not found");
+    const members = await guild.members.fetch();
+    return [...members.values()].map((member) => ({
+      id: member.id,
+      name: member.user.username,
+      avatar: member.user.avatarURL(),
+      string: member.toString(),
     }));
   }
 }
